@@ -307,7 +307,12 @@ export function substituteNodeOutputRefs(
         // JSON disallows NaN/Infinity, so String(number) contains only digits, sign, and '.'.
         // String(boolean) is 'true' or 'false' — no shell metacharacters.
         if (typeof value === 'number' || typeof value === 'boolean') return String(value);
-        return escapedForBash ? "''" : ''; // objects, null, undefined, symbol, bigint → empty
+        // arrays and objects: JSON-stringify. Bash passes substitution as a single
+        // argument, so downstream tools (jq, etc.) receive a JSON literal they can parse.
+        if (Array.isArray(value) || typeof value === 'object') {
+          return escapedForBash ? shellQuote(JSON.stringify(value)) : JSON.stringify(value);
+        }
+        return escapedForBash ? "''" : ''; // undefined, symbol, bigint → empty (null is caught above by typeof check)
       } catch (jsonErr) {
         getLog().warn(
           { nodeId, field, outputPreview: nodeOutput.output.slice(0, 100), err: jsonErr as Error },
@@ -1479,8 +1484,13 @@ async function executeScriptNode(
   const finalScript = substituteNodeOutputRefs(substitutedScript, nodeOutputs, false);
 
   const timeout = node.timeout ?? SUBPROCESS_DEFAULT_TIMEOUT;
-  const subprocessEnv =
-    envVars && Object.keys(envVars).length > 0 ? { ...process.env, ...envVars } : undefined;
+  const subprocessEnv: NodeJS.ProcessEnv = {
+    ...process.env,
+    ARTIFACTS_DIR: artifactsDir,
+    LOG_DIR: logDir,
+    BASE_BRANCH: baseBranch,
+    ...(envVars ?? {}),
+  };
 
   // Build the command and args based on runtime and inline vs named
   let cmd = '';
