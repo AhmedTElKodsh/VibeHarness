@@ -80,11 +80,11 @@ tasks:
     acceptance_ids: [AC-MVP-002]
     artifacts:
       - schemas/project.schema.json
-      - fixtures/minimal-valid-project/.vibeharness/project.yaml
-      - fixtures/invalid-project-missing-name/.vibeharness/project.yaml
+      - fixtures/vibeharness-starter/.vibeharness/project.yaml
+      - fixtures/vibeharness-missing-name/.vibeharness/project.yaml
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
-      - vibeharness validate fixtures/invalid-project-missing-name
+      - vibeharness validate fixtures/vibeharness-starter
+      - vibeharness validate fixtures/vibeharness-missing-name
     estimate: M
     owner_role: developer
   - id: VH-011
@@ -98,9 +98,9 @@ tasks:
     acceptance_ids: [AC-MVP-002, AC-MVP-004]
     artifacts:
       - schemas/workflow.schema.json
-      - fixtures/minimal-valid-project/.vibeharness/workflows/default-feature.yaml
+      - fixtures/vibeharness-starter/.vibeharness/workflows/default-feature.yaml
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/vibeharness-starter
     estimate: M
     owner_role: developer
   - id: VH-012
@@ -114,10 +114,10 @@ tasks:
     acceptance_ids: [AC-MVP-002, AC-MVP-004]
     artifacts:
       - schemas/adapter.schema.json
-      - fixtures/minimal-valid-project/.vibeharness/adapters/mock.yaml
-      - fixtures/minimal-valid-project/.vibeharness/adapters/openhands.yaml.example
+      - fixtures/vibeharness-starter/.vibeharness/adapters/mock.yaml
+      - fixtures/vibeharness-starter/.vibeharness/adapters/openhands.yaml.example
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/vibeharness-starter
     estimate: M
     owner_role: developer
   - id: VH-013
@@ -131,11 +131,11 @@ tasks:
     acceptance_ids: [AC-MVP-002, AC-MVP-005]
     artifacts:
       - schemas/policy.schema.json
-      - fixtures/minimal-valid-project/.vibeharness/policy.yaml
-      - fixtures/policy-blocked-command/.vibeharness/policy.yaml
+      - fixtures/vibeharness-starter/.vibeharness/policy.yaml
+      - fixtures/vibeharness-policy-blocked/.vibeharness/policy.yaml
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
-      - vibeharness validate fixtures/policy-blocked-command
+      - vibeharness validate fixtures/vibeharness-starter
+      - vibeharness validate fixtures/vibeharness-policy-blocked
     estimate: M
     owner_role: security
   - id: VH-020
@@ -169,8 +169,8 @@ tasks:
     artifacts:
       - validation-report.json
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
-      - vibeharness validate fixtures/invalid-project-missing-name
+      - vibeharness validate fixtures/vibeharness-starter
+      - vibeharness validate fixtures/vibeharness-missing-name
     estimate: M
     owner_role: developer
   - id: VH-022
@@ -284,8 +284,8 @@ tasks:
     depends_on: [VH-012, VH-040]
     acceptance_ids: [AC-MVP-004, AC-MVP-005]
     artifacts:
-      - fixtures/default-feature-run-mock/
-      - fixtures/policy-blocked-command/
+      - fixtures/vibeharness-mock-run/
+      - fixtures/vibeharness-policy-blocked/
       - .vibeharness/runs/<run_id>/adapter-task.yaml
     validation:
       - vibeharness run --workflow default-feature --adapter mock
@@ -395,14 +395,14 @@ tasks:
     depends_on: [VH-021, VH-042, VH-071]
     acceptance_ids: [AC-MVP-002, AC-MVP-003, AC-MVP-004, AC-MVP-005, AC-MVP-006]
     artifacts:
-      - fixtures/minimal-valid-project/
-      - fixtures/invalid-project-missing-name/
+      - fixtures/vibeharness-starter/
+      - fixtures/vibeharness-missing-name/
       - fixtures/example-idea-simple-feature/
-      - fixtures/default-feature-run-mock/
-      - fixtures/policy-blocked-command/
-      - fixtures/review-handoff-basic/
+      - fixtures/vibeharness-mock-run/
+      - fixtures/vibeharness-policy-blocked/
+      - fixtures/vibeharness-review-handoff/
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/vibeharness-starter
       - vibeharness run --workflow default-feature --adapter mock
       - vibeharness review --run latest
     estimate: L
@@ -516,7 +516,7 @@ tasks:
     artifacts:
       - tests/quality-gates/
     validation:
-      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/vibeharness-starter
       - vibeharness run --workflow default-feature --adapter mock
     estimate: M
     owner_role: qa

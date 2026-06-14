@@ -6,11 +6,11 @@ Generated: 2026-06-13
 
 VibeHarness Engine is a local-first, extensible orchestration and standards layer for AI-assisted software engineering. It defines project schemas, workflow profiles, agent adapter contracts, memory contracts, policy gates, and generated planning artifacts so that teams can run predictable idea-to-production workflows across AI coding backends.
 
-The initial implementation proves the local kernel with a mock adapter. OpenHands is the first real repo-execution control-plane integration after the adapter contract, run manifest, policy decisions, and review artifacts are stable. Archon-compatible workflows define deterministic stages. ECC provides operator policy, security gates, skills governance, hooks, and approvals. Hermes acts as the adaptive outer loop for memory, skill incubation, cron, messaging, and long-running Kanban coordination.
+The initial implementation proves the local kernel with a mock adapter. OpenHands is the first real repo-execution control-plane integration after the adapter contract, run manifest, policy decisions, and review artifacts are stable. VibeHarness workflows define deterministic stages. ECC provides operator policy, security gates, skills governance, hooks, and approvals. Hermes acts as the adaptive outer loop for memory, skill incubation, cron, messaging, and long-running Kanban coordination.
 
 ## 2. Background and rationale
 
-The current project direction is that VibeHarness should be a software-engineering harness, not merely a personal assistant. The discussion established VibeHarness as the local contract and orchestration kernel, OpenHands as the first real coding control-plane integration, Archon as the deterministic workflow model, ECC as the security/operator policy layer, and Hermes as the memory, skills, cron, messaging, and Kanban sidecar.
+The current project direction is that VibeHarness should be a software-engineering harness, not merely a personal assistant. The discussion established VibeHarness as the local contract and orchestration kernel, OpenHands as the first real coding control-plane integration, deterministic workflows as the execution model, ECC as the security/operator policy layer, and Hermes as the memory, skills, cron, messaging, and Kanban sidecar.
 
 This separation matters because direct repo execution, long-term memory, workflow determinism, and safety policy are different concerns. Bundling them into one agent makes the system harder to audit and easier to drift.
 
@@ -120,7 +120,7 @@ Needs approval gates, secret handling, tool restrictions, sandbox boundaries, an
 | FR-004 | CLI init | P0 | Running `vibeharness init` creates a valid starter project with docs, schemas, profiles, and examples. |
 | FR-005 | CLI validation | P0 | Invalid config fails with actionable errors; valid sample projects pass. |
 | FR-006 | Planning artifact generation | P0 | From a product idea, the system generates PRD, architecture draft, task plan, risk list, and acceptance criteria. |
-| FR-007 | Archon-compatible stage runner | P0 | The runner executes ordered workflow stages and stops on failed required gates. |
+| FR-007 | VibeHarness deterministic stage runner | P0 | The runner executes ordered workflow stages and stops on failed required gates. |
 | FR-008 | ECC-lite policy decisions | P0 | Tool, file, network, secret, dependency, and destructive-operation checks emit `allow`, `warn`, `approval_required`, `deny`, or `quarantine`. |
 | FR-009 | Run artifacts | P0 | Every run emits a manifest, stage logs, generated files, policy decisions, test results, review summary, and handoff. |
 | FR-010 | Handoff generation | P0 | The system generates a final handoff with changes, tests, risks, follow-ups, and proposal references. |
@@ -225,7 +225,7 @@ A local or hosted dashboard can show workflow status, approvals, diffs, logs, ru
 - Receives bounded repo tasks and context bundles.
 - Returns logs, files changed, diffs, command outputs, tests, and final summary.
 
-### Archon-compatible workflows
+### VibeHarness workflows
 
 - VibeHarness workflow profile maps to deterministic stages.
 - Stages have explicit inputs, outputs, gates, retries, and artifacts.
@@ -277,12 +277,12 @@ Core entities:
 
 ### Fixture metrics
 
-- `fixtures/minimal-valid-project` validates with zero errors.
-- `fixtures/invalid-project-missing-name` fails with a field-path error.
+- `fixtures/vibeharness-starter` validates with zero errors.
+- `fixtures/vibeharness-missing-name` fails with a field-path error.
 - `fixtures/example-idea-simple-feature` produces the required planning packet.
-- `fixtures/default-feature-run-mock` produces a valid run manifest.
-- `fixtures/policy-blocked-command` emits `approval_required` or `deny`.
-- `fixtures/review-handoff-basic` produces complete review and handoff artifacts.
+- `fixtures/vibeharness-mock-run` produces a valid run manifest.
+- `fixtures/vibeharness-policy-blocked` emits `approval_required` or `deny`.
+- `fixtures/vibeharness-review-handoff` produces complete review and handoff artifacts.
 
 ### Engineering metrics
 
@@ -312,6 +312,6 @@ MVP is ready when:
 
 - Initial users are technical and comfortable with CLI and Git.
 - OpenHands can expose the adapter hooks VibeHarness needs, but MVP success does not depend on that integration.
-- Archon compatibility means deterministic workflow semantics, not necessarily a hard dependency on a specific external runtime for MVP.
+- Workflow compatibility means deterministic stage semantics, not a hard dependency on a specific external runtime for MVP.
 - ECC is implemented first as policy files, hooks, and gates; deeper operator runtime can evolve later.
 - Hermes begins as a sidecar contract and optional integration, not as a required dependency for core runs.

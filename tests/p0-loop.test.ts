@@ -67,11 +67,11 @@ describe("P0 CLI loop", () => {
     const root = makeTempRoot();
     writeValidationFixtures(root);
 
-    const invalidResult = await runCli(root, ["validate", join(root, "fixtures", "invalid-project-missing-name")]);
+    const invalidResult = await runCli(root, ["validate", join(root, "fixtures", "vibeharness-missing-name")]);
     expect(invalidResult.exitCode).toBe(1);
     expect(invalidResult.stderr).toContain("$.name");
 
-    const fixtureRoot = join(root, "fixtures", "policy-blocked-command");
+    const fixtureRoot = join(root, "fixtures", "vibeharness-policy-blocked");
     expect(await runCli(fixtureRoot, ["run", "--workflow", "policy-blocked", "--adapter", "mock"])).toMatchObject({
       exitCode: 0
     });

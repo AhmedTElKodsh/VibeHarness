@@ -1,5 +1,5 @@
 export const projectYaml = `schemaVersion: v1alpha1
-name: minimal-valid-project
+name: vibeharness-starter
 repo:
   path: .
 stack:

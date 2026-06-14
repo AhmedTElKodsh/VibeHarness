@@ -45,16 +45,16 @@ describe("validation", () => {
     const root = track(makeTempRoot());
     writeValidationFixtures(root);
 
-    expect(validateTarget(join(root, "fixtures", "minimal-valid-project"))).toEqual({
+    expect(validateTarget(join(root, "fixtures", "vibeharness-starter"))).toEqual({
       ok: true,
       issues: []
     });
   });
 
   test.each([
-    ["policy-blocked-command"],
-    ["default-feature-run-mock"],
-    ["review-handoff-basic"]
+    ["vibeharness-policy-blocked"],
+    ["vibeharness-mock-run"],
+    ["vibeharness-review-handoff"]
   ])("accepts the %s fixture project", (fixtureName: string) => {
     const root = track(makeTempRoot());
     writeValidationFixtures(root);
@@ -66,7 +66,7 @@ describe("validation", () => {
     const root = track(makeTempRoot());
     writeValidationFixtures(root);
 
-    const result = validateTarget(join(root, "fixtures", "invalid-project-missing-name"));
+    const result = validateTarget(join(root, "fixtures", "vibeharness-missing-name"));
     expect(result.ok).toBe(false);
     expect(result.issues).toContainEqual(
       expect.objectContaining({

@@ -24,16 +24,16 @@ export function writeStarterProject(root: string, overwrite = false): void {
 }
 
 export function writeValidationFixtures(workspaceRoot: string): void {
-  const validRoot = join(workspaceRoot, "fixtures", "minimal-valid-project");
-  const invalidRoot = join(workspaceRoot, "fixtures", "invalid-project-missing-name");
-  const policyBlockedRoot = join(workspaceRoot, "fixtures", "policy-blocked-command");
-  const defaultRunRoot = join(workspaceRoot, "fixtures", "default-feature-run-mock");
-  const reviewHandoffRoot = join(workspaceRoot, "fixtures", "review-handoff-basic");
+  const validRoot = join(workspaceRoot, "fixtures", "vibeharness-starter");
+  const invalidRoot = join(workspaceRoot, "fixtures", "vibeharness-missing-name");
+  const policyBlockedRoot = join(workspaceRoot, "fixtures", "vibeharness-policy-blocked");
+  const defaultRunRoot = join(workspaceRoot, "fixtures", "vibeharness-mock-run");
+  const reviewHandoffRoot = join(workspaceRoot, "fixtures", "vibeharness-review-handoff");
 
   writeStarterProject(validRoot, true);
   writeText(
     join(invalidRoot, ".vibeharness", "project.yaml"),
-    projectYaml.replace("name: minimal-valid-project\n", ""),
+    projectYaml.replace("name: vibeharness-starter\n", ""),
     true
   );
   writeText(join(invalidRoot, ".vibeharness", "policy.yaml"), policyYaml, true);

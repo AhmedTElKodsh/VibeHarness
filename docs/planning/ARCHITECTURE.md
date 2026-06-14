@@ -29,7 +29,7 @@ VibeHarness Core
   |
   +--> OpenHands Adapter -> OpenHands Control Plane -> Sandbox -> Repo/Test/PR artifacts
   |
-  +--> Archon-Compatible Runner -> deterministic stage execution
+  +--> VibeHarness Deterministic Runner -> staged execution
   |
   +--> ECC Policy Layer -> security gates, approvals, hooks, skills policy
   |
@@ -173,7 +173,7 @@ Outputs:
 
 OpenHands is not required to prove the MVP kernel. It consumes the stable adapter contract after the mock adapter proves run determinism and artifact validation.
 
-### 7. Archon-compatible runner
+### 7. VibeHarness deterministic runner
 
 Provides deterministic workflow behavior:
 
@@ -185,7 +185,7 @@ Provides deterministic workflow behavior:
 - stop/resume behavior;
 - parallelizable future stages.
 
-The MVP can implement Archon-compatible semantics locally and later integrate with an external Archon runtime if desired.
+The MVP implements deterministic workflow semantics locally and can later compile to external workflow runtimes if desired.
 
 ### 8. ECC policy layer
 

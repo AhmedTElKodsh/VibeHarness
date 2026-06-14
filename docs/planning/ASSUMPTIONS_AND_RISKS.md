@@ -11,7 +11,7 @@ Track the assumptions and risks that could change the VibeHarness plan. These ar
 | ID | Assumption | Current stance | Validation path | Risk if wrong |
 |---|---|---|---|---|
 | A-001 | The MVP can prove useful value without a real coding backend. | Accepted for MVP. | Complete the mock-adapter idea -> plan -> run -> review -> handoff fixture. | OpenHands integration pressure returns too early and destabilizes contracts. |
-| A-002 | Archon-compatible semantics are enough for MVP; a hard dependency on an external Archon runtime is not required. | Accepted for MVP. | Implement ordered stages, gates, artifacts, and resume-safe state locally. | Workflow model drifts from real Archon capabilities. |
+| A-002 | VibeHarness deterministic workflow semantics are enough for MVP; a hard dependency on an external workflow runtime is not required. | Accepted for MVP. | Implement ordered stages, gates, artifacts, and resume-safe state locally. | Workflow model drifts from future adapter capabilities. |
 | A-003 | ECC-lite can be represented as policy files plus decision artifacts before a deeper operator runtime exists. | Accepted for MVP. | Prove `allow`, `warn`, `approval_required`, `deny`, and `quarantine` in fixtures. | Policy language becomes decorative instead of enforceable. |
 | A-004 | OpenHands can later consume the stable adapter task contract. | Unproven. | Build the OpenHands adapter only after mock adapter fixtures pass. | Adapter contract may need revision after first real backend integration. |
 | A-005 | Hermes should remain proposal-only until review and promotion flows are proven. | Accepted. | Emit proposal files but do not auto-write memory or activate skills. | Hidden memory or self-created skills could corrupt project truth. |

@@ -1,5 +1,7 @@
 # Adapters
 
-Adapter contract implementations and adapter-specific documentation.
+Adapter documentation for VibeHarness execution backends.
 
-The MVP adapter is `mock`. The first real execution adapter is deferred to OpenHands after the P0 mock-adapter loop passes.
+The implemented P0 adapter is `mock`. It produces deterministic local artifacts and policy decisions so the core contract can be validated without network access or a real coding backend.
+
+`openhands` is represented only by `.vibeharness/adapters/openhands.yaml.example` in starter projects. It is deferred until the mock adapter, run manifest, policy decisions, review, and handoff contracts are stable.

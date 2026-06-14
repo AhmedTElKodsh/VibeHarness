@@ -27,7 +27,7 @@ The winning architecture is not one all-powerful agent. It is a governed harness
 VibeHarness = schemas, workflows, adapters, artifact contracts, policy decisions
 Mock adapter = MVP execution proof for deterministic contracts
 OpenHands   = first real coding-agent control-plane integration after the kernel works
-Archon      = deterministic workflow semantics and optional compatible runtime
+VibeHarness runner = deterministic workflow semantics and optional compatible runtime
 ECC         = security, operator policy, hooks, approvals, skills governance
 Hermes      = adaptive memory, skills incubation, messaging, cron, Kanban
 ```

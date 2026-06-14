@@ -1,66 +1,78 @@
 # Planning Index
 
-Generated: 2026-06-14
+Status: active
+Owner: PM / Architect
 
 ## Purpose
 
-Define the source-of-truth order for the VibeHarness planning bundle and keep the MVP contract separate from future architecture notes.
+Define the source-of-truth order for the VibeHarness planning bundle and separate implemented P0 behavior from future architecture notes.
 
-## Source-of-truth order
+## Current Implementation Baseline
 
-1. `PROJECT_BRIEF.md` defines product identity and the short strategic thesis.
-2. `PRD.md` defines product requirements, priorities, user journeys, and launch criteria.
-3. `MVP_SCOPE.md` defines the committed first vertical slice and acceptance tests.
-4. `ARCHITECTURE.md` defines canonical contracts, state machines, artifact layout, and integration boundaries.
-5. `TRACEABILITY.md` maps PRD requirements to phases, tasks, acceptance IDs, artifacts, and fixtures.
-6. `WORKFLOW_SPEC.md` defines the default workflow stages by referencing the canonical contracts.
-7. `SECURITY_AND_GOVERNANCE.md` and `MEMORY_AND_SKILLS_POLICY.md` define policy and proposal constraints.
-8. `ASSUMPTIONS_AND_RISKS.md` tracks open assumptions and risks that can change sequencing.
-9. `ROADMAP.md`, `BACKLOG.md`, and `tasks.yaml` define delivery sequencing and must trace back to PRD requirement IDs.
+As of this cleanup, the repository implements the P0 local CLI loop:
 
-## Reference material
+```bash
+bun src/cli.ts init
+bun src/cli.ts validate .
+bun src/cli.ts plan --idea docs/example-idea.md
+bun src/cli.ts run --workflow default-feature --adapter mock
+bun src/cli.ts review --run latest
+```
 
+Implemented commands are `init`, `validate`, `fixtures`, `plan`, `run`, and `review`. Mentions of `explain`, `export`, real OpenHands execution, hosted UI, Hermes, or automatic memory/skill promotion are roadmap items unless source code and tests say otherwise.
+
+## Source-of-Truth Order
+
+When planning documents conflict, use this order:
+
+1. `AGENTS.md` and root `README.md` define the active repository and command contract for contributors.
+2. `MVP_SCOPE.md` defines what must be proven first.
+3. `TRACEABILITY.md` maps requirements to tasks, artifacts, and acceptance IDs.
+4. `BACKLOG.md` owns epic/task intent.
+5. `tasks.yaml` owns implementation queue status and dependencies.
+6. `ARCHITECTURE.md` owns component boundaries and artifact contracts.
+7. `WORKFLOW_SPEC.md` owns the workflow stage model.
+8. `SECURITY_AND_GOVERNANCE.md` and `MEMORY_AND_SKILLS_POLICY.md` define policy and proposal constraints.
+9. `PROJECT_BRIEF.md`, `PRD.md`, `ROADMAP.md`, and `ASSUMPTIONS_AND_RISKS.md` provide product context.
+
+## Reference Material
+
+- `external-comparison-tavily.md` summarizes external ecosystem context.
 - `vibeharness_connected_architecture.md` is a non-authoritative vision/source note. It may contain older names or future ambition and must not override the files above.
-- `external-comparison-tavily.md` is the summarized research brief. Raw research exports belong under `docs/planning/research/raw/`.
 
-## Canonical vocabulary
+## Canonical Vocabulary
 
-| Concept | Canonical value |
+| Concept | Canonical term |
 |---|---|
+| Product | VibeHarness Engine |
 | CLI command | `vibeharness` |
+| Current executable form | `bun src/cli.ts ...` |
+| Package name | `vibeharness-engine` |
 | Project config directory | `.vibeharness/` |
 | Workflow directory | `.vibeharness/workflows/` |
 | Adapter directory | `.vibeharness/adapters/` |
 | Policy file | `.vibeharness/policy.yaml` |
 | Run artifact root | `.vibeharness/runs/<run_id>/` |
-| Risk artifact | `risk-register.md` |
-| Human task artifact | `tasks.md` |
-| Machine-readable implementation queue | `docs/planning/tasks.yaml` |
+| Latest run mirror | `.vibeharness/runs/latest/` |
+| Risk file | `risk-register.md` |
 | MVP execution adapter | `mock` |
-| First real coding adapter | `openhands` |
+| First real backend adapter | `OpenHands` |
+| Long-term memory sidecar | `Hermes` |
+| Policy/operator layer | `ECC-lite` for MVP |
 
-## Traceability rule
+## Traceability Rule
 
-Every delivery task must include:
+Any P0 implementation item must appear in all of:
 
-- PRD requirement references;
-- roadmap phase;
-- dependencies;
-- acceptance IDs;
-- produced artifacts;
-- validation command or fixture.
+- `PRD.md` functional requirements or MVP scope;
+- `BACKLOG.md` task list;
+- `tasks.yaml` with status, priority, acceptance IDs, and validation notes;
+- `TRACEABILITY.md`.
 
-If a task cannot name those fields, it is not ready for implementation.
+If a task is not in all four places, treat it as planning-only until the gap is fixed.
 
-## Implementation start rule
+## Implementation Rule
 
-Implementation starts with P0 only. The first implementation pass must execute and test the P0 queue in `docs/planning/tasks.yaml` before any P1/P2 work begins.
+P0 stays centered on the mock-adapter loop until `AC-MVP-001` through `AC-MVP-006` pass through `bun run validate`.
 
-Required order:
-
-1. Foundation and traceability tasks.
-2. Schema, validation, and fixture tasks.
-3. Planning artifact generation tasks.
-4. Deterministic runner, mock adapter, policy, review, handoff, and golden fixture tasks.
-
-P1/P2 tasks may remain in the backlog and `tasks.yaml`, but they must stay `blocked` until all P0 acceptance IDs (`AC-MVP-001` through `AC-MVP-006`) pass through their named validation commands or fixtures.
+P1/P2 tasks may remain in the backlog and `tasks.yaml`, but they must stay blocked until the P0 acceptance set is passing and the docs clearly mark the new scope as implemented.

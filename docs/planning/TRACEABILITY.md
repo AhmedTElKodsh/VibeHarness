@@ -10,16 +10,16 @@ Map PRD requirements to roadmap phases, implementation tasks, acceptance IDs, ar
 
 | PRD ID | Requirement | Phase | Backlog/tasks | Acceptance IDs | Primary artifacts | Fixture or validation |
 |---|---|---:|---|---|---|---|
-| FR-001 | Project schema | 0, 1 | VH-002, VH-010 | AC-MVP-001, AC-MVP-002 | `.vibeharness/project.yaml`, `schemas/project.schema.json` | `fixtures/minimal-valid-project`, `fixtures/invalid-project-missing-name` |
-| FR-002 | Workflow profile schema | 1 | VH-011 | AC-MVP-002, AC-MVP-004 | `.vibeharness/workflows/default-feature.yaml`, `schemas/workflow.schema.json` | `fixtures/minimal-valid-project` |
-| FR-003 | Adapter contract and mock adapter | 1, 3 | VH-012, VH-042 | AC-MVP-002, AC-MVP-004, AC-MVP-005 | `.vibeharness/adapters/mock.yaml`, `.vibeharness/runs/<run_id>/adapter-task.yaml` | `fixtures/default-feature-run-mock`, `fixtures/policy-blocked-command` |
+| FR-001 | Project schema | 0, 1 | VH-002, VH-010 | AC-MVP-001, AC-MVP-002 | `.vibeharness/project.yaml`, `schemas/project.schema.json` | `fixtures/vibeharness-starter`, `fixtures/vibeharness-missing-name` |
+| FR-002 | Workflow profile schema | 1 | VH-011 | AC-MVP-002, AC-MVP-004 | `.vibeharness/workflows/default-feature.yaml`, `schemas/workflow.schema.json` | `fixtures/vibeharness-starter` |
+| FR-003 | Adapter contract and mock adapter | 1, 3 | VH-012, VH-042 | AC-MVP-002, AC-MVP-004, AC-MVP-005 | `.vibeharness/adapters/mock.yaml`, `.vibeharness/runs/<run_id>/adapter-task.yaml` | `fixtures/vibeharness-mock-run`, `fixtures/vibeharness-policy-blocked` |
 | FR-004 | CLI init | 0, 1 | VH-001, VH-002, VH-020 | AC-MVP-001 | `.vibeharness/` starter structure | init smoke fixture |
 | FR-005 | CLI validation | 1, 6 | VH-021, VH-022 | AC-MVP-002, Post-MVP | validation report, explain report | valid and invalid schema fixtures |
 | FR-006 | Planning artifact generation | 2 | VH-030, VH-031, VH-032 | AC-MVP-003 | `docs/prd.md`, `docs/architecture.md`, `docs/tasks.md`, `docs/risk-register.md`, `docs/unresolved-questions.md` | `docs/example-idea.md`, generated-artifact golden fixtures |
-| FR-007 | Archon-compatible stage runner | 3, 6 | VH-040, VH-022 | AC-MVP-004, Post-MVP | stage logs, stage states, explain report | `fixtures/default-feature-run-mock` |
-| FR-008 | ECC-lite policy decisions | 4 | VH-060, VH-061, VH-062 | AC-MVP-005, AC-MVP-006 | `.vibeharness/runs/<run_id>/policy-decisions/*.json`, `.vibeharness/runs/<run_id>/approval-request.json`, `policy-audit.md` | `fixtures/policy-blocked-command` |
+| FR-007 | VibeHarness deterministic stage runner | 3, 6 | VH-040, VH-022 | AC-MVP-004, Post-MVP | stage logs, stage states, explain report | `fixtures/vibeharness-mock-run` |
+| FR-008 | ECC-lite policy decisions | 4 | VH-060, VH-061, VH-062 | AC-MVP-005, AC-MVP-006 | `.vibeharness/runs/<run_id>/policy-decisions/*.json`, `.vibeharness/runs/<run_id>/approval-request.json`, `policy-audit.md` | `fixtures/vibeharness-policy-blocked` |
 | FR-009 | Run artifacts | 3 | VH-041 | AC-MVP-004, AC-MVP-006 | `.vibeharness/runs/<run_id>/run-manifest.json` | manifest validation fixture |
-| FR-010 | Handoff generation | 4 | VH-070, VH-071 | AC-MVP-006 | `review.md`, `handoff.md` | `fixtures/review-handoff-basic` |
+| FR-010 | Handoff generation | 4 | VH-070, VH-071 | AC-MVP-006 | `review.md`, `handoff.md` | `fixtures/vibeharness-review-handoff` |
 | FR-011 | Evaluation fixtures | 4 | VH-090 | AC-MVP-002, AC-MVP-003, AC-MVP-004, AC-MVP-005, AC-MVP-006 | `fixtures/*` | fixture workflow suite |
 | FR-012 | OpenHands adapter | 5 | VH-050, VH-051, VH-052 | Post-MVP | `.vibeharness/adapters/openhands.yaml` | OpenHands integration fixture |
 | FR-013 | Memory proposal contract | 6 | VH-080 | Post-MVP | `.vibeharness/runs/<run_id>/memory-proposals/*.md` | proposal schema fixture |
