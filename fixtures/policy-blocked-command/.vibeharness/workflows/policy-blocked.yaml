@@ -1,0 +1,9 @@
+schemaVersion: v1alpha1
+name: policy-blocked
+stages:
+  - id: destructive-command
+    name: Destructive command check
+    required: true
+    adapter: mock
+    outputs:
+      - .vibeharness/runs/latest/approval-request.json

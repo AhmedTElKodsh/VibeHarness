@@ -1,0 +1,26 @@
+schemaVersion: v1alpha1
+name: default-feature
+stages:
+  - id: intake
+    name: Intake
+    required: true
+    outputs:
+      - docs/prd.md
+  - id: architecture
+    name: Architecture
+    required: true
+    outputs:
+      - docs/architecture.md
+      - docs/risk-register.md
+  - id: implementation
+    name: Mock implementation
+    required: true
+    adapter: mock
+    outputs:
+      - .vibeharness/runs/latest/adapter-task.yaml
+  - id: review
+    name: Review and handoff
+    required: true
+    outputs:
+      - .vibeharness/runs/latest/review.md
+      - .vibeharness/runs/latest/handoff.md

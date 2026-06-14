@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/project.schema.json",
+  "title": "VibeHarness Project",
+  "type": "object",
+  "required": ["schemaVersion", "name", "repo", "stack", "workflows", "adapters"],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "name": { "type": "string", "minLength": 1 },
+    "repo": {
+      "type": "object",
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "stack": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "workflows": {
+      "type": "object",
+      "required": ["default"],
+      "properties": {
+        "default": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "adapters": {
+      "type": "object",
+      "required": ["default"],
+      "properties": {
+        "default": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,59 @@
+{
+  "schemaVersion": "v1alpha1",
+  "runId": "20260614003747",
+  "workflow": "default-feature",
+  "adapter": "mock",
+  "status": "passed",
+  "startedAt": "2026-06-14T00:37:47.030Z",
+  "completedAt": "2026-06-14T00:37:47.033Z",
+  "stages": [
+    {
+      "id": "intake",
+      "status": "passed",
+      "artifacts": [
+        "docs/prd.md"
+      ]
+    },
+    {
+      "id": "architecture",
+      "status": "passed",
+      "artifacts": [
+        "docs/architecture.md",
+        "docs/risk-register.md"
+      ]
+    },
+    {
+      "id": "implementation",
+      "status": "passed",
+      "artifacts": [
+        ".vibeharness/runs/latest/adapter-task.yaml"
+      ]
+    },
+    {
+      "id": "review",
+      "status": "passed",
+      "artifacts": [
+        ".vibeharness/runs/latest/review.md",
+        ".vibeharness/runs/latest/handoff.md"
+      ]
+    }
+  ],
+  "policyDecisions": [
+    {
+      "id": "mock-fixture",
+      "decision": "allow",
+      "reason": "Default mock fixture uses only deterministic local artifact writes."
+    }
+  ],
+  "tests": [
+    {
+      "command": "mock fixture assertions",
+      "status": "passed"
+    }
+  ],
+  "artifacts": [
+    ".vibeharness/runs/<run_id>/adapter-task.yaml",
+    ".vibeharness/runs/<run_id>/stage-logs/implementation.log",
+    ".vibeharness/runs/<run_id>/policy-decisions/mock-fixture.json"
+  ]
+}

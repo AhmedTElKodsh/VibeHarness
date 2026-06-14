@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/workflow.schema.json",
+  "title": "VibeHarness Workflow",
+  "type": "object",
+  "required": ["schemaVersion", "name", "stages"],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "name": { "type": "string", "minLength": 1 },
+    "stages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "required", "outputs"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "name": { "type": "string", "minLength": 1 },
+          "required": { "type": "boolean" },
+          "adapter": { "type": "string", "minLength": 1 },
+          "outputs": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

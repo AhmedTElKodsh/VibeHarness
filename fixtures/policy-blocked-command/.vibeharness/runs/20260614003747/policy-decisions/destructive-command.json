@@ -1,0 +1,6 @@
+{
+  "id": "destructive-command",
+  "decision": "approval_required",
+  "reason": "Mock fixture requested a destructive command.",
+  "command": "rm -rf build"
+}

@@ -1,0 +1,5 @@
+schemaVersion: v1alpha1
+name: mock
+type: mock
+mode: fixture
+fixture: default-feature

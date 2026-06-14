@@ -1,0 +1,64 @@
+{
+  "content": "# Control-plane recommendation for an “ultimate vibe coding assistant harness” (2026)\n\n## Executive recommendation\nSelect OpenHands as the primary control plane and use Archon as a complementary deterministic workflow harness where desired. OpenHands provides the stronger foundation for durable state, sandboxed execution, event-sourced observability and a control-plane UI; Archon adds lightweight, Git-worktree–centric YAML workflows and deterministic run semantics that are highly useful for reproducible developer-facing flows. This hybrid approach balances long-lived state, multi-agent orchestration, and enterprise observability with deterministic, review-oriented Git workflows. Key trade-offs and migration steps follow. [7], [1]\n\n## Comparative summary (concise, by candidate)\n\n- Archon — strong workflow harness: YAML-defined development processes, deterministic nodes mixed with AI nodes, explicit human-in-the-loop approval steps, and isolated Git worktrees so parallel runs do not conflict; model/provider selection and extensions/gating are supported. Archon emphasizes reproducible, worktree-isolated runs and automated PR creation. [1]\n\n- LangGraph — graph-based orchestrator with persistence, checkpointers, interrupts and time‑travel semantics; centralized persistent state accessible to nodes and built-in human-in-the-loop interrupts for pausing/resuming flows. Well-suited for long-running agents and persistent execution state. [2]\n\n- CrewAI — production-ready, role-based “Crews” and event-driven Flows with large-scale execution telemetry (high daily execution counts) and GitOps promotion pipelines; targets enterprise deployments with observability and staging promotion. [3]\n\n- Cline — developer-focused, IDE-integrated agent that supports plan→act with per-action approvals, plugin/MCP extensibility, deep editor integrations and Kanban-style worktrees; emphasizes interactive human-in-the-loop flows, rules/skills files and multi-agent scheduling. [4]\n\n- Aider — terminal-first assistant integrating tightly with git; commits every AI-generated change, supports model switching including local models via Ollama, and emphasizes zero vendor lock‑in and reproducible commits. [5]\n\n- Plandex — terminal client for very large-context tasks (up to millions of tokens), cumulative-diff sandboxing, multi-model flexibility via OpenRouter, and Git integration with automatic commit-message generation; targets very large codebases. [6]\n\n- OpenHands — open-source control plane and SDK with event-sourced state management, sandboxed execution, security policies, a REST GUI and a cloud-hosted option; provides granular control, observability into running agents and the ability to configure sandboxes, secrets and models from the control plane. [7]\n\n- SWE‑agent — example multi-agent system built on LangGraph with hierarchical Pydantic state models; shows how structured agent state and typed fields enable safe, ordered multi-agent workflows. [8]\n\n- GitHub Spec Kit — agent-agnostic toolkit for spec-driven development workflows; designed to bootstrap spec→implementation workflows and integrate specs into repositories as authoritative inputs. [9]\n\n- BMAD Method — opinionated, open methodology and agent persona set that prescribes safety controls (restricting sensitive data access, prompt‑injection prevention, auditing suggested dependencies) and incremental changes as guardrails. [10]\n\n- SuperClaude Framework — feature-rich Claude Code integration with rules, many agent personas, slash commands and local project config (.claude/) for per-project behavior; emphasizes deep integration with a specific provider/ecosystem. [11]\n\n(Each candidate paragraph above cites a primary source documenting the listed capabilities.) [1][2][3][4][5][6][7][8][9][10][11]\n\n## Why OpenHands + Archon (rationale and trade-offs)\n- Strengths: OpenHands supplies the control-plane primitives most relevant to a production harness: event-sourced, durable state (suitable for session state and long-lived context), sandboxed execution and control-plane visibility for agent lifecycle, scaling, and security policy enforcement — capabilities central to safe multi-agent, long-running workflows. Archon adds deterministic, repeatable YAML workflow semantics, isolated Git worktrees, and automatic PR creation that fit developer ergonomics and reproducibility needs. Combining them yields durable orchestration plus deterministic developer workflows. [7], [1]\n\n- Trade-offs: OpenHands’ default simple deployment is limited in scale unless extended (additional DB, storage, auth) and its default single-container setup needs ops work to be production‑grade; Archon provides lightweight harness simplicity but is focused on per‑run deterministic flows rather than long-lived state. Choosing OpenHands increases initial operational complexity but improves observability and safety; Archon lowers the onboarding curve for reproducible runs but provides less native long-term state management. [7], [1]\n\n## Migration / PoC plan (actionable checklist)\n1. Minimum Viable Architecture: deploy OpenHands control plane (self-hosted), enable event‑sourced state, sandbox runtimes and secret registry; expose a REST GUI for reviewers. Stand up a small Archon instance (CLI + workflows) that targets the same Git repositories and can be invoked by OpenHands flows. [7], [1]\n\n2. Git/worktree integration: configure Archon workflows to create isolated worktrees and open PRs; have OpenHands orchestrate longer-lived planning/coordination agents and call Archon for implementation steps that require deterministic, reproducible edits and PR creation. Validate that Archon’s worktree isolation fits team branching policies. [1], [7]\n\n3. Human approval + safety gates: implement OpenHands sandbox policies and confirmation rules; wire Archon’s human-in-the-loop pauses into the OpenHands reviewer UI for final approval before PR merges. Enforce incremental change sizes and dependency auditing per BMAD prescriptions. [7], [1], [10]\n\n4. Multi-agent choreography: model long-running architect/planner agents inside OpenHands (event-sourced state) and delegate code-writing tasks to Archon or Cline/Aider-style specialists for interactive edits. Use LangGraph patterns (interrupts/checkpointers) for resumable subflows where needed. [7], [1], [2]\n\n5. CI/observability: stream agent telemetry and event-sourced logs from OpenHands to the observability stack; assure reproducible builds by enforcing Archon workflow definitions in-repo and automated test generation (via Archon or agent steps). [7], [1]\n\n6. PoC metrics: measure PR acceptance rate, reviewer time, sandbox replays, agent cost, and number of parallel worktrees handled without conflict.\n\n## Remediation plan to minimize vendor/tool lock‑in\n- Favor model-agnostic adapters and local model support at the interface layer (OpenHands and Archon both support multiple backends); keep model selection configurable. Use Archon and Aider-style local model paths (Ollama or OpenRouter) for critical/privacy workloads. [1], [5], [6], [7]\n- Keep workflow definitions, specs and policy rules in repo‑owned formats (.archon/, .specify/, .claude/ as needed) and use GitHub Spec Kit for spec→implementation provenance. [9], [1]\n- Maintain straightforward export of event logs and state snapshots from OpenHands to neutral formats and retain an on‑premise backup of worktrees and PR diffs. [7]\n\n## Evidence gaps\n- No authoritative cross-benchmark quantifying latency/cost/performance across these platforms was found in the provided sources.\n- Detailed enterprise compliance feature sets (specific certifications, data‑residency guarantees) and turnkey deployment templates for OpenHands at scale are not fully documented in the evidence.\n\n## Works Cited\n[1] https://github.com/coleam00/archon\n[2] https://docs.langchain.com/oss/python/langgraph/overview\n[3] https://docs.crewai.com/en/introduction\n[4] https://docs.cline.bot/cline-overview\n[5] https://pristren.com/blog/aider-ai-coding-guide\n[6] https://regolo.ai/handling-big-projects-with-ai-in-your-terminal-with-plandex\n[7] https://openhands.dev\n[8] https://github.com/langtalks/swe-agent\n[9] https://github.github.com/spec-kit\n[10] https://rywalker.com/research/bmad-method\n[11] https://github.com/SuperClaude-Org/SuperClaude_Framework",
+  "sources": [
+    {
+      "url": "https://github.com/coleam00/archon",
+      "title": "GitHub - coleam00/Archon: The first open-source harness builder for AI coding. Make AI coding deterministic and repeatable. · GitHub",
+      "favicon": "https://github.githubassets.com/favicons/favicon.svg"
+    },
+    {
+      "url": "https://docs.langchain.com/oss/python/langgraph/overview",
+      "title": "LangGraph overview - Docs by LangChain",
+      "favicon": "http://docs.langchain.com/mintlify-assets/_mintlify/favicons/langchain-5e9cc07a/YSQua9Gt91yRswvJ/_generated/favicon/apple-touch-icon.png"
+    },
+    {
+      "url": "https://docs.crewai.com/en/introduction",
+      "title": "Introduction - CrewAI Documentation",
+      "favicon": "https://docs.crewai.com/mintlify-assets/_mintlify/favicons/crewai/4u_yrBmnBvL-de5g/_generated/favicon/apple-touch-icon.png"
+    },
+    {
+      "url": "https://docs.cline.bot/cline-overview",
+      "title": "Cline Overview - Cline",
+      "favicon": "https://docs.cline.bot/mintlify-assets/_mintlify/favicons/cline-efdc8260/h9psENO1rxORGL1D/_generated/favicon/apple-touch-icon.png"
+    },
+    {
+      "url": "https://pristren.com/blog/aider-ai-coding-guide",
+      "title": "Aider AI Coding Guide: Open Source Terminal Assistant (2026)",
+      "favicon": "https://pristren.com/favicon.ico"
+    },
+    {
+      "url": "https://regolo.ai/handling-big-projects-with-ai-in-your-terminal-with-plandex",
+      "title": "Handling big projects with AI in your terminal with Plandex - regolo.ai",
+      "favicon": "https://regolo.ai/wp-content/uploads/2025/02/cropped-favicon-32x32-1-180x180.png"
+    },
+    {
+      "url": "https://github.com/langtalks/swe-agent",
+      "title": "GitHub - langtalks/swe-agent: 🤖 AI-powered software engineering multi-agent system with researcher and developer agents that automate code implementation through intelligent planning and execution. Built with LangGraph multi-agent workflows · GitHub",
+      "favicon": "https://github.githubassets.com/favicons/favicon.svg"
+    },
+    {
+      "url": "https://openhands.dev",
+      "title": "OpenHands | The Open Platform for Cloud Coding Agents",
+      "favicon": "https://cdn.prod.website-files.com/68ff4057b35616cdd47d5ac7/69713f0a35368a1317acf110_webclip.jpg"
+    },
+    {
+      "url": "https://github.github.com/spec-kit",
+      "title": "GitHub Spec Kit | Spec Kit Documentation",
+      "favicon": null
+    },
+    {
+      "url": "https://github.com/SuperClaude-Org/SuperClaude_Framework",
+      "title": "GitHub - SuperClaude-Org/SuperClaude_Framework: A configuration framework that enhances Claude Code with specialized commands, cognitive personas, and development methodologies. · GitHub",
+      "favicon": "https://github.githubassets.com/favicons/favicon.svg"
+    },
+    {
+      "url": "https://rywalker.com/research/bmad-method",
+      "title": "BMAD Method | Ry Walker Research",
+      "favicon": "https://rywalker.com/apple-icon.png?apple-icon.c233146d.png"
+    }
+  ],
+  "status": "completed",
+  "created_at": "2026-06-13T19:23:36.394229+00:00",
+  "response_time": 218.24,
+  "request_id": "727f9ed8-86a5-42c0-93bf-67e1d94d4c9e"
+}

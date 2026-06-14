@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/policy.schema.json",
+  "title": "VibeHarness Policy",
+  "type": "object",
+  "required": ["schemaVersion", "secrets", "commands", "audit"],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "secrets": {
+      "type": "object",
+      "required": ["default"],
+      "properties": {
+        "default": { "enum": ["deny", "allow"] }
+      },
+      "additionalProperties": false
+    },
+    "commands": {
+      "type": "object",
+      "required": ["destructive", "dependency_additions", "network_production"],
+      "properties": {
+        "destructive": { "enum": ["approval_required", "deny", "allow"] },
+        "dependency_additions": { "enum": ["approval_required", "deny", "allow"] },
+        "network_production": { "enum": ["approval_required", "deny", "allow"] }
+      },
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "required": ["log_shell_commands", "log_file_writes"],
+      "properties": {
+        "log_shell_commands": { "type": "boolean" },
+        "log_file_writes": { "type": "boolean" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

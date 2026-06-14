@@ -1,0 +1,5 @@
+schemaVersion: v1alpha1
+runId: 20260614003654
+workflow: default-feature
+adapter: mock
+task: Execute deterministic mock fixture for default-feature

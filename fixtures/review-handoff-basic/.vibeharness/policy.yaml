@@ -1,0 +1,10 @@
+schemaVersion: v1alpha1
+secrets:
+  default: deny
+commands:
+  destructive: approval_required
+  dependency_additions: approval_required
+  network_production: approval_required
+audit:
+  log_shell_commands: true
+  log_file_writes: true

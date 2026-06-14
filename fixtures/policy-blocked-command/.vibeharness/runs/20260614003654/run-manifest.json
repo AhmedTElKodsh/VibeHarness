@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "v1alpha1",
+  "runId": "20260614003654",
+  "workflow": "policy-blocked",
+  "adapter": "mock",
+  "status": "approval_required",
+  "startedAt": "2026-06-14T00:36:54.888Z",
+  "completedAt": "2026-06-14T00:36:54.892Z",
+  "stages": [
+    {
+      "id": "destructive-command",
+      "status": "blocked",
+      "artifacts": [
+        ".vibeharness/runs/latest/approval-request.json"
+      ]
+    }
+  ],
+  "policyDecisions": [
+    {
+      "id": "destructive-command",
+      "decision": "approval_required",
+      "reason": "Mock fixture requested a destructive command.",
+      "command": "rm -rf build"
+    }
+  ],
+  "tests": [
+    {
+      "command": "mock fixture assertions",
+      "status": "passed"
+    }
+  ],
+  "artifacts": [
+    ".vibeharness/runs/<run_id>/adapter-task.yaml",
+    ".vibeharness/runs/<run_id>/stage-logs/implementation.log",
+    ".vibeharness/runs/<run_id>/policy-decisions/destructive-command.json"
+  ]
+}
