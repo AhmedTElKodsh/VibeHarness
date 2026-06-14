@@ -182,7 +182,7 @@ Provides deterministic workflow behavior:
 - artifact dependencies;
 - retries;
 - required gates;
-- stop/resume behavior;
+- stop/resume behavior after the P0 contract is stable;
 - parallelizable future stages.
 
 The MVP implements deterministic workflow semantics locally and can later compile to external workflow runtimes if desired.
@@ -239,30 +239,27 @@ Each run creates:
 
 ```text
 .vibeharness/runs/<run_id>/
-  manifest.json
-  inputs/
+  run-manifest.json
+  adapter-task.yaml
   stage-logs/
-  artifacts/
-  diffs/
+  policy-decisions/
   tests/
-  reviews/
+  approval-request.json
+  review.md
   handoff.md
-  memory-proposals/
-  skill-proposals/
+  policy-audit.md
 ```
+
+`approval-request.json` is present only when a policy decision requires approval. Memory and skill proposal directories are deferred until the proposal contract is implemented.
 
 ## State model
 
 Workflow run states:
 
-- created
-- validating
+- approval_required
 - blocked
-- running
-- waiting_for_approval
 - failed
 - passed
-- cancelled
 
 Policy decision states:
 
@@ -275,7 +272,6 @@ Policy decision states:
 Stage states:
 
 - pending
-- ready
 - running
 - blocked
 - failed

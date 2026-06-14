@@ -185,12 +185,12 @@ vibeharness validate
 vibeharness plan
 vibeharness run
 vibeharness review
-vibeharness explain
 ```
 
-Deferred command:
+Deferred commands:
 
 ```text
+vibeharness explain
 vibeharness export
 ```
 
@@ -279,7 +279,7 @@ Core entities:
 
 - `fixtures/vibeharness-starter` validates with zero errors.
 - `fixtures/vibeharness-missing-name` fails with a field-path error.
-- `fixtures/example-idea-simple-feature` produces the required planning packet.
+- `docs/example-idea.md` produces the required planning packet.
 - `fixtures/vibeharness-mock-run` produces a valid run manifest.
 - `fixtures/vibeharness-policy-blocked` emits `approval_required` or `deny`.
 - `fixtures/vibeharness-review-handoff` produces complete review and handoff artifacts.

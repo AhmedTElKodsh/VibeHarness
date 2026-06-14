@@ -36,6 +36,8 @@ Implementation starts with P0 and stays on P0 until the MVP acceptance set passe
 
 Do not start OpenHands, exports, Hermes sidecar work, adapter expansion, hosted UI, or automatic memory/skill promotion until the P0 mock-adapter loop is implemented and tested.
 
+Current repository status: the P0 CLI loop is implemented and covered by `bun run validate`. Phase 5+ remains deferred until the project intentionally starts real adapter work.
+
 ## Phase 1: Core schemas and CLI validation
 
 ### Goal
@@ -90,9 +92,9 @@ Execute stages, persist run state, and prove the adapter contract without extern
 - Run manifest.
 - Artifact directory model.
 - Gate model.
-- Stop/resume basics.
+- Required-stage status mapping.
 - Mock adapter.
-- Passing, failing, and policy-blocked fixture runs.
+- Passing and policy-blocked fixture runs.
 
 ### Exit criteria
 
@@ -115,11 +117,11 @@ Complete the core local loop with reviewable evidence and concrete policy decisi
 - Policy decision artifacts.
 - Approval-required result state.
 - Post-run audit summary.
-- Skill quarantine enforcement.
+- Skill quarantine enforcement is deferred until proposal artifacts exist.
 
 ### Exit criteria
 
-- Every mock run ends with a human-readable review, handoff, policy summary, and optional proposal files.
+- Every mock run ends with a human-readable review, handoff, and policy summary.
 - Policy violation fixture is blocked.
 - Approval-required fixture pauses and records the approval decision.
 
