@@ -1,0 +1,5 @@
+{
+  "id": "mock-fixture",
+  "decision": "allow",
+  "reason": "Default mock fixture uses only deterministic local artifact writes."
+}

@@ -1,0 +1,9 @@
+schemaVersion: v1alpha1
+repo:
+  path: .
+stack:
+  - typescript
+workflows:
+  default: default-feature
+adapters:
+  default: mock

@@ -1,0 +1,6 @@
+{
+  "runId": "20260614003654",
+  "decisionId": "destructive-command",
+  "reason": "Mock fixture requested a destructive command.",
+  "command": "rm -rf build"
+}

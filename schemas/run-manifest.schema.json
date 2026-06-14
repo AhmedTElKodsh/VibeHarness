@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/run-manifest.schema.json",
+  "title": "VibeHarness Run Manifest",
+  "type": "object",
+  "required": ["schemaVersion", "runId", "workflow", "adapter", "status", "startedAt", "completedAt", "stages", "policyDecisions", "tests", "artifacts"],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "workflow": { "type": "string", "minLength": 1 },
+    "adapter": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["passed", "failed", "approval_required"] },
+    "startedAt": { "type": "string", "minLength": 1 },
+    "completedAt": { "type": "string", "minLength": 1 },
+    "stages": { "type": "array" },
+    "policyDecisions": { "type": "array" },
+    "tests": { "type": "array" },
+    "artifacts": { "type": "array" }
+  },
+  "additionalProperties": false
+}

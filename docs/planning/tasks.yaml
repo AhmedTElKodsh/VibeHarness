@@ -1,0 +1,539 @@
+version: 2
+project: vibeharness-engine
+canonical:
+  command: vibeharness
+  config_dir: .vibeharness
+  run_artifact_root: .vibeharness/runs/<run_id>
+  mvp_adapter: mock
+statuses:
+  - ready
+  - blocked
+  - in_progress
+  - done
+tasks:
+  - id: VH-000
+    epic: E1
+    phase: 0
+    title: Normalize planning contracts
+    priority: P0
+    status: done
+    prd_refs: [FR-001, FR-002, FR-003, FR-011]
+    depends_on: []
+    acceptance_ids: [AC-MVP-001, AC-MVP-002]
+    artifacts:
+      - docs/planning/PLANNING_INDEX.md
+      - docs/planning/MVP_SCOPE.md
+    validation:
+      - active planning vocabulary scan has no old-name findings outside non-authoritative source notes and raw research
+    estimate: S
+    owner_role: architect
+  - id: VH-001
+    epic: E1
+    phase: 0
+    title: Create repository skeleton
+    priority: P0
+    status: done
+    prd_refs: [FR-001, FR-004]
+    depends_on: [VH-000]
+    acceptance_ids: [AC-MVP-001]
+    artifacts:
+      - docs/
+      - schemas/
+      - profiles/
+      - adapters/
+      - workflows/
+      - tests/
+      - examples/
+    validation:
+      - test -d docs && test -d schemas && test -d profiles && test -d adapters && test -d workflows && test -d tests && test -d examples
+    estimate: S
+    owner_role: developer
+  - id: VH-002
+    epic: E1
+    phase: 0
+    title: Define package and project structure
+    priority: P0
+    status: done
+    prd_refs: [FR-001, FR-004]
+    depends_on: [VH-001]
+    acceptance_ids: [AC-MVP-001, AC-MVP-002]
+    artifacts:
+      - package.json
+      - schemas/
+      - adapters/
+      - workflows/
+      - tests/
+      - examples/
+    validation:
+      - test -f package.json
+      - test -d schemas && test -d adapters && test -d workflows && test -d tests && test -d examples
+    estimate: S
+    owner_role: developer
+  - id: VH-010
+    epic: E2
+    phase: 1
+    title: Implement project schema v1alpha1
+    priority: P0
+    status: done
+    prd_refs: [FR-001, FR-005]
+    depends_on: [VH-002]
+    acceptance_ids: [AC-MVP-002]
+    artifacts:
+      - schemas/project.schema.json
+      - fixtures/minimal-valid-project/.vibeharness/project.yaml
+      - fixtures/invalid-project-missing-name/.vibeharness/project.yaml
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/invalid-project-missing-name
+    estimate: M
+    owner_role: developer
+  - id: VH-011
+    epic: E2
+    phase: 1
+    title: Implement workflow schema v1alpha1
+    priority: P0
+    status: done
+    prd_refs: [FR-002, FR-007]
+    depends_on: [VH-010]
+    acceptance_ids: [AC-MVP-002, AC-MVP-004]
+    artifacts:
+      - schemas/workflow.schema.json
+      - fixtures/minimal-valid-project/.vibeharness/workflows/default-feature.yaml
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+    estimate: M
+    owner_role: developer
+  - id: VH-012
+    epic: E2
+    phase: 1
+    title: Implement adapter schema and mock adapter config
+    priority: P0
+    status: done
+    prd_refs: [FR-003, FR-005]
+    depends_on: [VH-010]
+    acceptance_ids: [AC-MVP-002, AC-MVP-004]
+    artifacts:
+      - schemas/adapter.schema.json
+      - fixtures/minimal-valid-project/.vibeharness/adapters/mock.yaml
+      - fixtures/minimal-valid-project/.vibeharness/adapters/openhands.yaml.example
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+    estimate: M
+    owner_role: developer
+  - id: VH-013
+    epic: E2
+    phase: 1
+    title: Implement policy schema v1alpha1
+    priority: P0
+    status: done
+    prd_refs: [FR-008]
+    depends_on: [VH-010]
+    acceptance_ids: [AC-MVP-002, AC-MVP-005]
+    artifacts:
+      - schemas/policy.schema.json
+      - fixtures/minimal-valid-project/.vibeharness/policy.yaml
+      - fixtures/policy-blocked-command/.vibeharness/policy.yaml
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/policy-blocked-command
+    estimate: M
+    owner_role: security
+  - id: VH-020
+    epic: E3
+    phase: 1
+    title: Implement vibeharness init
+    priority: P0
+    status: done
+    prd_refs: [FR-004]
+    depends_on: [VH-010, VH-011, VH-012, VH-013]
+    acceptance_ids: [AC-MVP-001]
+    artifacts:
+      - .vibeharness/project.yaml
+      - .vibeharness/policy.yaml
+      - .vibeharness/workflows/default-feature.yaml
+      - .vibeharness/adapters/mock.yaml
+    validation:
+      - vibeharness init --fixture tmp/init-smoke
+      - vibeharness validate tmp/init-smoke
+    estimate: M
+    owner_role: developer
+  - id: VH-021
+    epic: E3
+    phase: 1
+    title: Implement vibeharness validate
+    priority: P0
+    status: done
+    prd_refs: [FR-005]
+    depends_on: [VH-010, VH-011, VH-012, VH-013]
+    acceptance_ids: [AC-MVP-002]
+    artifacts:
+      - validation-report.json
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness validate fixtures/invalid-project-missing-name
+    estimate: M
+    owner_role: developer
+  - id: VH-022
+    epic: E3
+    phase: 6
+    title: Implement vibeharness explain
+    priority: P2
+    status: blocked
+    blocked_reason: Explain is ergonomic deferred work; start only after the P0 validate/run/review loop passes.
+    prd_refs: [FR-005, FR-007]
+    depends_on: [VH-021, VH-040]
+    acceptance_ids: []
+    artifacts:
+      - explain-report.md
+    validation:
+      - vibeharness explain --workflow default-feature
+    estimate: S
+    owner_role: developer
+  - id: VH-030
+    epic: E4
+    phase: 2
+    title: Implement PRD generator
+    priority: P0
+    status: done
+    prd_refs: [FR-006]
+    depends_on: [VH-020, VH-021]
+    acceptance_ids: [AC-MVP-003]
+    artifacts:
+      - docs/prd.md
+      - docs/unresolved-questions.md
+    validation:
+      - vibeharness plan --idea docs/example-idea.md
+      - test -f docs/prd.md && test -f docs/unresolved-questions.md
+      - vibeharness validate .
+    estimate: M
+    owner_role: developer
+  - id: VH-031
+    epic: E4
+    phase: 2
+    title: Implement architecture note generator
+    priority: P0
+    status: done
+    prd_refs: [FR-006]
+    depends_on: [VH-030]
+    acceptance_ids: [AC-MVP-003]
+    artifacts:
+      - docs/architecture.md
+      - docs/risk-register.md
+    validation:
+      - vibeharness plan --idea docs/example-idea.md
+      - test -f docs/architecture.md && test -f docs/risk-register.md
+      - vibeharness validate .
+    estimate: M
+    owner_role: developer
+  - id: VH-032
+    epic: E4
+    phase: 2
+    title: Implement task plan generator
+    priority: P0
+    status: done
+    prd_refs: [FR-006]
+    depends_on: [VH-031]
+    acceptance_ids: [AC-MVP-003]
+    artifacts:
+      - docs/tasks.md
+    validation:
+      - vibeharness plan --idea docs/example-idea.md
+      - test -f docs/tasks.md
+      - vibeharness validate .
+    estimate: M
+    owner_role: developer
+  - id: VH-040
+    epic: E5
+    phase: 3
+    title: Implement deterministic stage runner
+    priority: P0
+    status: done
+    prd_refs: [FR-007, FR-009]
+    depends_on: [VH-021, VH-030, VH-031, VH-032]
+    acceptance_ids: [AC-MVP-004]
+    artifacts:
+      - .vibeharness/runs/<run_id>/run-manifest.json
+      - .vibeharness/runs/<run_id>/stage-logs/
+    validation:
+      - vibeharness run --workflow default-feature --adapter mock
+    estimate: L
+    owner_role: developer
+  - id: VH-041
+    epic: E5
+    phase: 3
+    title: Implement run manifest contract
+    priority: P0
+    status: done
+    prd_refs: [FR-009]
+    depends_on: [VH-040]
+    acceptance_ids: [AC-MVP-004, AC-MVP-006]
+    artifacts:
+      - schemas/run-manifest.schema.json
+      - .vibeharness/runs/<run_id>/run-manifest.json
+    validation:
+      - vibeharness validate .vibeharness/runs/latest/run-manifest.json
+    estimate: M
+    owner_role: developer
+  - id: VH-042
+    epic: E5
+    phase: 3
+    title: Implement mock adapter fixture execution
+    priority: P0
+    status: done
+    prd_refs: [FR-003, FR-011]
+    depends_on: [VH-012, VH-040]
+    acceptance_ids: [AC-MVP-004, AC-MVP-005]
+    artifacts:
+      - fixtures/default-feature-run-mock/
+      - fixtures/policy-blocked-command/
+      - .vibeharness/runs/<run_id>/adapter-task.yaml
+    validation:
+      - vibeharness run --workflow default-feature --adapter mock
+      - vibeharness run --workflow policy-blocked --adapter mock
+    estimate: M
+    owner_role: developer
+  - id: VH-060
+    epic: E7
+    phase: 4
+    title: Implement ECC-lite policy classifier
+    priority: P0
+    status: done
+    prd_refs: [FR-008]
+    depends_on: [VH-013, VH-040]
+    acceptance_ids: [AC-MVP-005]
+    artifacts:
+      - .vibeharness/runs/<run_id>/policy-decisions/*.json
+    validation:
+      - vibeharness run --workflow policy-blocked --adapter mock
+    estimate: M
+    owner_role: security
+  - id: VH-061
+    epic: E7
+    phase: 4
+    title: Implement approval-required state
+    priority: P0
+    status: done
+    prd_refs: [FR-008]
+    depends_on: [VH-040, VH-060]
+    acceptance_ids: [AC-MVP-005]
+    artifacts:
+      - .vibeharness/runs/<run_id>/policy-decisions/*.json
+      - .vibeharness/runs/<run_id>/approval-request.json
+    validation:
+      - vibeharness run --workflow policy-blocked --adapter mock
+      - test -f .vibeharness/runs/latest/approval-request.json
+    estimate: M
+    owner_role: security
+  - id: VH-062
+    epic: E7
+    phase: 4
+    title: Emit policy audit report
+    priority: P0
+    status: done
+    prd_refs: [FR-008, FR-009, FR-010]
+    depends_on: [VH-060, VH-061]
+    acceptance_ids: [AC-MVP-005, AC-MVP-006]
+    artifacts:
+      - .vibeharness/runs/<run_id>/policy-audit.md
+    validation:
+      - vibeharness review --run latest
+    estimate: S
+    owner_role: security
+  - id: VH-070
+    epic: E8
+    phase: 4
+    title: Implement review generator
+    priority: P0
+    status: done
+    prd_refs: [FR-010]
+    depends_on: [VH-041, VH-042, VH-062]
+    acceptance_ids: [AC-MVP-006]
+    artifacts:
+      - .vibeharness/runs/<run_id>/review.md
+    validation:
+      - vibeharness review --run latest
+    estimate: M
+    owner_role: developer
+  - id: VH-071
+    epic: E8
+    phase: 4
+    title: Implement handoff generator
+    priority: P0
+    status: done
+    prd_refs: [FR-010]
+    depends_on: [VH-070]
+    acceptance_ids: [AC-MVP-006]
+    artifacts:
+      - .vibeharness/runs/<run_id>/handoff.md
+    validation:
+      - vibeharness review --run latest
+    estimate: M
+    owner_role: developer
+  - id: VH-072
+    epic: E8
+    phase: 6
+    title: Implement PR description generator
+    priority: P1
+    status: blocked
+    blocked_reason: PR/export packaging starts only after P0 review and handoff artifacts are stable.
+    prd_refs: [FR-015]
+    depends_on: [VH-071]
+    acceptance_ids: []
+    artifacts:
+      - .vibeharness/runs/<run_id>/exports/pr-description.md
+    validation:
+      - vibeharness export --run latest --target pr
+    estimate: M
+    owner_role: developer
+  - id: VH-090
+    epic: E10
+    phase: 4
+    title: Add golden fixture workflows
+    priority: P0
+    status: done
+    prd_refs: [FR-011]
+    depends_on: [VH-021, VH-042, VH-071]
+    acceptance_ids: [AC-MVP-002, AC-MVP-003, AC-MVP-004, AC-MVP-005, AC-MVP-006]
+    artifacts:
+      - fixtures/minimal-valid-project/
+      - fixtures/invalid-project-missing-name/
+      - fixtures/example-idea-simple-feature/
+      - fixtures/default-feature-run-mock/
+      - fixtures/policy-blocked-command/
+      - fixtures/review-handoff-basic/
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness run --workflow default-feature --adapter mock
+      - vibeharness review --run latest
+    estimate: L
+    owner_role: qa
+  - id: VH-050
+    epic: E6
+    phase: 5
+    title: Implement OpenHands task package generator
+    priority: P1
+    status: blocked
+    blocked_reason: P1 work starts only after all P0 acceptance IDs AC-MVP-001 through AC-MVP-006 pass with the mock adapter.
+    prd_refs: [FR-012]
+    depends_on: [VH-042, VH-090]
+    acceptance_ids: []
+    artifacts:
+      - .vibeharness/adapters/openhands.yaml
+    validation:
+      - vibeharness run --workflow default-feature --adapter openhands
+    estimate: L
+    owner_role: developer
+  - id: VH-051
+    epic: E6
+    phase: 5
+    title: Normalize OpenHands result
+    priority: P1
+    status: blocked
+    blocked_reason: Depends on stable P0 adapter-task and run artifact contracts proven by VH-090.
+    prd_refs: [FR-012]
+    depends_on: [VH-050, VH-090]
+    acceptance_ids: []
+    artifacts:
+      - .vibeharness/runs/<run_id>/openhands-result.json
+    validation:
+      - vibeharness run --workflow default-feature --adapter openhands
+    estimate: L
+    owner_role: developer
+  - id: VH-052
+    epic: E6
+    phase: 5
+    title: Add OpenHands integration fixture
+    priority: P1
+    status: blocked
+    blocked_reason: Depends on a normalized OpenHands result and completed P0 fixture suite.
+    prd_refs: [FR-012]
+    depends_on: [VH-051, VH-090]
+    acceptance_ids: []
+    artifacts:
+      - fixtures/openhands-default-feature/
+    validation:
+      - vibeharness run --workflow default-feature --adapter openhands
+    estimate: M
+    owner_role: qa
+  - id: VH-080
+    epic: E9
+    phase: 6
+    title: Implement memory proposal format
+    priority: P1
+    status: blocked
+    blocked_reason: P1 proposal formats start after P0 review and handoff artifacts are stable.
+    prd_refs: [FR-013]
+    depends_on: [VH-071]
+    acceptance_ids: []
+    artifacts:
+      - .vibeharness/runs/<run_id>/memory-proposals/<proposal-id>.md
+    validation:
+      - vibeharness review --run latest
+    estimate: M
+    owner_role: analyst
+  - id: VH-081
+    epic: E9
+    phase: 6
+    title: Implement skill proposal format
+    priority: P1
+    status: blocked
+    blocked_reason: P1 proposal formats start after P0 review and handoff artifacts are stable.
+    prd_refs: [FR-014]
+    depends_on: [VH-071]
+    acceptance_ids: []
+    artifacts:
+      - .vibeharness/runs/<run_id>/skill-proposals/<skill-name>.md
+    validation:
+      - vibeharness review --run latest
+    estimate: M
+    owner_role: analyst
+  - id: VH-082
+    epic: E9
+    phase: 6
+    title: Implement Hermes export prototype
+    priority: P2
+    status: blocked
+    blocked_reason: Export work starts only after P0 and P1 proposal formats are validated.
+    prd_refs: [FR-015]
+    depends_on: [VH-080, VH-081]
+    acceptance_ids: []
+    artifacts:
+      - .vibeharness/runs/<run_id>/exports/hermes-summary.json
+    validation:
+      - vibeharness export --run latest --target hermes
+    estimate: M
+    owner_role: analyst
+  - id: VH-091
+    epic: E10
+    phase: 6
+    title: Add quality gate tests
+    priority: P1
+    status: blocked
+    blocked_reason: Quality gate expansion starts after the P0 golden fixture suite exists.
+    prd_refs: [FR-011]
+    depends_on: [VH-090]
+    acceptance_ids: []
+    artifacts:
+      - tests/quality-gates/
+    validation:
+      - vibeharness validate fixtures/minimal-valid-project
+      - vibeharness run --workflow default-feature --adapter mock
+    estimate: M
+    owner_role: qa
+  - id: VH-092
+    epic: E10
+    phase: 6
+    title: Add regression harness
+    priority: P1
+    status: blocked
+    blocked_reason: Regression harness starts after P0 fixture workflows produce stable artifacts.
+    prd_refs: [FR-011]
+    depends_on: [VH-090]
+    acceptance_ids: []
+    artifacts:
+      - tests/regression/
+      - fixtures/regressions/
+    validation:
+      - vibeharness run --workflow default-feature --adapter mock
+    estimate: M
+    owner_role: qa
