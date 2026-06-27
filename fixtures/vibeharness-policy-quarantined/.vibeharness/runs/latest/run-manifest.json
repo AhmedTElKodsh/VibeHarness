@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "v1alpha1",
+  "runId": "20260614194407",
+  "workflow": "policy-quarantined",
+  "adapter": "mock",
+  "status": "passed",
+  "startedAt": "2026-06-14T19:44:07.144Z",
+  "completedAt": "2026-06-14T19:44:07.147Z",
+  "stages": [
+    {
+      "id": "memory-update",
+      "status": "passed",
+      "artifacts": [
+        ".vibeharness/runs/latest/policy-decisions/memory-update.json"
+      ]
+    }
+  ],
+  "policyDecisions": [
+    {
+      "id": "memory-update",
+      "runId": "20260614194407",
+      "stageId": "memory-update",
+      "actionType": "memory",
+      "resource": "project-context.md",
+      "decision": "quarantine",
+      "reason": "Memory updates are proposal-only in the MVP policy.",
+      "policyRuleId": "memory.proposal_only",
+      "timestamp": "2026-06-14T19:44:07.144Z",
+      "artifactReferences": [
+        ".vibeharness/runs/<run_id>/policy-decisions/memory-update.json"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "command": "mock fixture assertions",
+      "status": "passed"
+    }
+  ],
+  "artifacts": [
+    ".vibeharness/runs/<run_id>/adapter-task.yaml",
+    ".vibeharness/runs/<run_id>/stage-logs/implementation.log",
+    ".vibeharness/runs/<run_id>/policy-decisions/memory-update.json"
+  ]
+}

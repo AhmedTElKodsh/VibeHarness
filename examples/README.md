@@ -6,7 +6,9 @@ The starter project currently writes `docs/example-idea.md`. Use it with:
 
 ```bash
 bun src/cli.ts plan --idea docs/example-idea.md
+bun src/cli.ts compile --workflow default-feature --target archon
 bun src/cli.ts run --workflow default-feature --adapter mock
+bun src/cli.ts approve --run latest --decision destructive-command --outcome rejected --actor reviewer
 bun src/cli.ts review --run latest
 ```
 

@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/approval-request.schema.json",
+  "title": "VibeHarness Approval Request",
+  "type": "object",
+  "required": [
+    "runId",
+    "decisionId",
+    "stageId",
+    "actionType",
+    "resource",
+    "reason",
+    "policyRuleId",
+    "requestedApprovalActor"
+  ],
+  "properties": {
+    "runId": { "type": "string", "minLength": 1 },
+    "decisionId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "actionType": {
+      "enum": ["command", "file", "network", "dependency", "secret", "skill", "memory", "adapter"]
+    },
+    "resource": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string", "minLength": 1 },
+    "policyRuleId": { "type": "string", "minLength": 1 },
+    "requestedApprovalActor": { "type": "string", "minLength": 1 },
+    "command": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

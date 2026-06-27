@@ -1,5 +1,11 @@
 schemaVersion: v1alpha1
-runId: 20260614003747
+runId: "20260614193127"
 workflow: policy-blocked
 adapter: mock
 task: Execute deterministic mock fixture for policy-blocked
+stageId: destructive-command
+operatorProfile: ecc-implementation
+policyHints:
+  - commands.destructive=approval_required
+expectedArtifacts:
+  - .vibeharness/runs/latest/approval-request.json

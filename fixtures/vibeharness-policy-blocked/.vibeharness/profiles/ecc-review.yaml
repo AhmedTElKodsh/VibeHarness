@@ -1,0 +1,13 @@
+schemaVersion: v1alpha1
+name: ecc-review
+skills:
+  approved:
+    - code-review
+    - handoff-writer
+hooks:
+  pre_stage:
+    - policy-preflight
+  post_stage:
+    - handoff-audit
+memory:
+  mode: proposal_only

@@ -2,7 +2,7 @@
 
 Local-first Bun + TypeScript CLI for proving a deterministic AI-development workflow harness.
 
-VibeHarness currently focuses on the P0 contract loop: initialize project files, validate contracts, generate planning docs, execute a deterministic mock adapter, and produce review/handoff evidence. Real coding backends such as OpenHands are deferred until this local contract is stable.
+VibeHarness currently focuses on the P0 contract loop: initialize project files, validate contracts, generate planning docs, execute a deterministic mock adapter, and produce review/handoff evidence. OpenCode is the planned first real coding backend after the local contract stays stable; OpenHands remains a secondary adapter target.
 
 ## Quick Start
 
@@ -17,7 +17,9 @@ Create and run a starter VibeHarness project:
 bun src/cli.ts init
 bun src/cli.ts validate .
 bun src/cli.ts plan --idea docs/example-idea.md
+bun src/cli.ts compile --workflow default-feature --target archon
 bun src/cli.ts run --workflow default-feature --adapter mock
+bun src/cli.ts approve --run latest --decision destructive-command --outcome rejected --actor reviewer
 bun src/cli.ts review --run latest
 ```
 
@@ -28,7 +30,9 @@ bun src/cli.ts init [--fixture <path>] [--force]
 bun src/cli.ts validate <path>
 bun src/cli.ts fixtures
 bun src/cli.ts plan --idea <path>
+bun src/cli.ts compile --workflow <name> --target archon
 bun src/cli.ts run --workflow <name> --adapter <name>
+bun src/cli.ts approve --run <latest|run_id> --decision <id> --outcome <approved|rejected> --actor <name> [--reason <text>]
 bun src/cli.ts review --run <latest|run_id>
 ```
 
@@ -41,13 +45,17 @@ Starter projects use `.vibeharness/`:
   project.yaml
   policy.yaml
   workflows/default-feature.yaml
+  profiles/ecc-planning.yaml
+  profiles/ecc-implementation.yaml
+  profiles/ecc-review.yaml
   adapters/mock.yaml
   adapters/openhands.yaml.example
+  compiled/archon/<workflow>.yaml
   runs/<run_id>/
   runs/latest/
 ```
 
-Generated planning docs are written under `docs/`. Run artifacts include `run-manifest.json`, `adapter-task.yaml`, stage logs, policy decisions, optional approval requests, review, handoff, and policy audit files.
+Generated planning docs are written under `docs/`. Compile artifacts are written under `.vibeharness/compiled/` and can be validated with `validate`. Run artifacts include validated `run-manifest.json`, `adapter-task.yaml`, policy decisions, optional approval requests and outcomes, review, handoff, policy audit, and stage log files.
 
 ## Development
 

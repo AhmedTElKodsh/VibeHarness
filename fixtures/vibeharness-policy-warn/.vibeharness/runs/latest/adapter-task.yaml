@@ -1,0 +1,11 @@
+schemaVersion: v1alpha1
+runId: "20260614194407"
+workflow: policy-warn
+adapter: mock
+task: Execute deterministic mock fixture for policy-warn
+stageId: noncritical-warning
+operatorProfile: ecc-implementation
+policyHints:
+  - file.warning=warn
+expectedArtifacts:
+  - .vibeharness/runs/latest/policy-decisions/noncritical-warning.json

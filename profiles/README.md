@@ -1,5 +1,5 @@
 # Profiles
 
-Reserved documentation area for reusable workflow profiles.
+Reserved documentation area for reusable operator and workflow profiles.
 
-The active workflow profile contract currently lives in `.vibeharness/workflows/*.yaml` for generated projects and in `src/templates.ts` for the built-in starter workflow. Do not document profile behavior here as implemented until the engine loads profile files from this directory.
+Generated projects include ECC operator profiles under `.vibeharness/profiles/ecc-*.yaml`, and compile artifacts attach those profiles to workflow nodes. Repository-level reusable profiles remain deferred until the engine loads profile files from this directory.

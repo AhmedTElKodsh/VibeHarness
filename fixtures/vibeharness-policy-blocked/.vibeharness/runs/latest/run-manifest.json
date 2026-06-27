@@ -1,11 +1,11 @@
 {
   "schemaVersion": "v1alpha1",
-  "runId": "20260614003747",
+  "runId": "20260614193127",
   "workflow": "policy-blocked",
   "adapter": "mock",
   "status": "approval_required",
-  "startedAt": "2026-06-14T00:37:47.626Z",
-  "completedAt": "2026-06-14T00:37:47.629Z",
+  "startedAt": "2026-06-14T19:31:27.140Z",
+  "completedAt": "2026-06-14T19:31:27.144Z",
   "stages": [
     {
       "id": "destructive-command",
@@ -18,8 +18,18 @@
   "policyDecisions": [
     {
       "id": "destructive-command",
+      "runId": "20260614193127",
+      "stageId": "destructive-command",
+      "actionType": "command",
+      "resource": "rm -rf build",
       "decision": "approval_required",
-      "reason": "Mock fixture requested a destructive command.",
+      "reason": "Destructive shell commands require explicit policy handling.",
+      "policyRuleId": "commands.destructive",
+      "timestamp": "2026-06-14T19:31:27.140Z",
+      "artifactReferences": [
+        ".vibeharness/runs/<run_id>/policy-decisions/destructive-command.json"
+      ],
+      "requestedApprovalActor": "human",
       "command": "rm -rf build"
     }
   ],

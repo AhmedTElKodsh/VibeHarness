@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/adapter-task.schema.json",
+  "title": "VibeHarness Adapter Task",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "runId",
+    "workflow",
+    "adapter",
+    "task",
+    "stageId",
+    "operatorProfile",
+    "policyHints",
+    "expectedArtifacts"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "workflow": { "type": "string", "minLength": 1 },
+    "adapter": { "type": "string", "minLength": 1 },
+    "task": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "operatorProfile": { "type": "string", "minLength": 1 },
+    "policyHints": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "expectedArtifacts": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    }
+  },
+  "additionalProperties": false
+}

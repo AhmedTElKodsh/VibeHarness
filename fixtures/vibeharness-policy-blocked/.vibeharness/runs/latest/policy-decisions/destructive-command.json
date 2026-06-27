@@ -1,6 +1,16 @@
 {
   "id": "destructive-command",
+  "runId": "20260614193127",
+  "stageId": "destructive-command",
+  "actionType": "command",
+  "resource": "rm -rf build",
   "decision": "approval_required",
-  "reason": "Mock fixture requested a destructive command.",
+  "reason": "Destructive shell commands require explicit policy handling.",
+  "policyRuleId": "commands.destructive",
+  "timestamp": "2026-06-14T19:31:27.140Z",
+  "artifactReferences": [
+    ".vibeharness/runs/<run_id>/policy-decisions/destructive-command.json"
+  ],
+  "requestedApprovalActor": "human",
   "command": "rm -rf build"
 }

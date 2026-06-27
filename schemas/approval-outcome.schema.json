@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/approval-outcome.schema.json",
+  "title": "VibeHarness Approval Outcome",
+  "type": "object",
+  "required": ["schemaVersion", "runId", "decisionId", "outcome", "actor", "reason", "recordedAt"],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "runId": { "type": "string", "minLength": 1 },
+    "decisionId": { "type": "string", "minLength": 1 },
+    "outcome": { "enum": ["approved", "rejected"] },
+    "actor": { "type": "string", "minLength": 1 },
+    "reason": { "type": "string", "minLength": 1 },
+    "recordedAt": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

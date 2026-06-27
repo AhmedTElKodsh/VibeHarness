@@ -4,11 +4,11 @@ Generated: 2026-06-13
 
 ## Purpose
 
-Define how Hermes, VibeHarness, and ECC should handle long-term memory and self-improving skills without corrupting project truth.
+Define how Mem0, Hermes-compatible exports, VibeHarness, and ECC should handle long-term memory and self-improving skills without corrupting project truth.
 
 ## Core rule
 
-Hermes can propose memory and skills. VibeHarness, ECC, and humans decide what becomes committed project truth.
+Mem0 can store reviewed project-truth memory and VibeHarness can emit memory or skill proposals. Hermes-compatible export is deferred. VibeHarness, ECC, and humans decide what becomes committed project truth.
 
 ## Memory types
 
@@ -156,19 +156,16 @@ Promotion requires:
 - owner approval;
 - ECC policy approval.
 
-## Hermes responsibilities
+## Mem0 responsibilities
 
-Hermes may:
+Mem0 may:
 
-- identify repeated preferences;
-- propose memory updates;
-- draft skills;
-- coordinate review reminders;
-- summarize run learnings;
-- manage Kanban follow-ups;
-- schedule recurring health checks.
+- store reviewed project-truth facts;
+- return relevant facts for stage context;
+- reference accepted memories by ID;
+- support proposal review without auto-committing new facts.
 
-Hermes may not, in MVP:
+Mem0 may not, in MVP:
 
 - silently edit committed project memory;
 - activate new skills without review;
@@ -176,11 +173,15 @@ Hermes may not, in MVP:
 - run direct production actions;
 - overwrite architecture decisions.
 
+## Hermes responsibilities
+
+Hermes is a deferred export/interchange target. It may later receive run summaries, memory proposal exports, skill proposal exports, reminders, and coordination summaries after proposal formats are validated.
+
 ## VibeHarness responsibilities
 
 VibeHarness must:
 
-- export run summaries to Hermes-compatible proposal formats;
+- export run summaries to Mem0/Hermes-compatible proposal formats;
 - preserve traceability from proposal to evidence;
 - validate proposal schema;
 - keep committed project truth explicit;
@@ -206,7 +207,7 @@ Suggested cadence for early project:
 
 ## Anti-drift checks
 
-- Compare Hermes memory against committed project docs.
+- Compare Mem0/Hermes memory against committed project docs.
 - Warn when hidden memory contradicts repository context.
 - Prefer latest committed ADR over assistant memory.
 - Expire stale preferences when they have not been reinforced.

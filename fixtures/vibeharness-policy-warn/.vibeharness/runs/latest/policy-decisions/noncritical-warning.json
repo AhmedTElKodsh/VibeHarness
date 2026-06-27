@@ -1,0 +1,14 @@
+{
+  "id": "noncritical-warning",
+  "runId": "20260614194407",
+  "stageId": "noncritical-warning",
+  "actionType": "file",
+  "resource": "docs/noncritical-note.md",
+  "decision": "warn",
+  "reason": "Action is allowed with a non-blocking policy warning.",
+  "policyRuleId": "file.warning",
+  "timestamp": "2026-06-14T19:44:07.522Z",
+  "artifactReferences": [
+    ".vibeharness/runs/<run_id>/policy-decisions/noncritical-warning.json"
+  ]
+}

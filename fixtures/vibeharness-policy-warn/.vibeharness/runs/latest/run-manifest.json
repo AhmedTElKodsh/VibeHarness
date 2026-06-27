@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "v1alpha1",
+  "runId": "20260614194407",
+  "workflow": "policy-warn",
+  "adapter": "mock",
+  "status": "passed",
+  "startedAt": "2026-06-14T19:44:07.522Z",
+  "completedAt": "2026-06-14T19:44:07.525Z",
+  "stages": [
+    {
+      "id": "noncritical-warning",
+      "status": "passed",
+      "artifacts": [
+        ".vibeharness/runs/latest/policy-decisions/noncritical-warning.json"
+      ]
+    }
+  ],
+  "policyDecisions": [
+    {
+      "id": "noncritical-warning",
+      "runId": "20260614194407",
+      "stageId": "noncritical-warning",
+      "actionType": "file",
+      "resource": "docs/noncritical-note.md",
+      "decision": "warn",
+      "reason": "Action is allowed with a non-blocking policy warning.",
+      "policyRuleId": "file.warning",
+      "timestamp": "2026-06-14T19:44:07.522Z",
+      "artifactReferences": [
+        ".vibeharness/runs/<run_id>/policy-decisions/noncritical-warning.json"
+      ]
+    }
+  ],
+  "tests": [
+    {
+      "command": "mock fixture assertions",
+      "status": "passed"
+    }
+  ],
+  "artifacts": [
+    ".vibeharness/runs/<run_id>/adapter-task.yaml",
+    ".vibeharness/runs/<run_id>/stage-logs/implementation.log",
+    ".vibeharness/runs/<run_id>/policy-decisions/noncritical-warning.json"
+  ]
+}

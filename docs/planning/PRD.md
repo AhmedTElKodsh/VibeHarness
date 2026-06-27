@@ -1,16 +1,17 @@
 # Product Requirements Document: VibeHarness Engine
 
 Generated: 2026-06-13
+Revised: 2026-06-28 (ecosystem research update — see `docs/planning/research/ecosystem-landscape-2026-06-28.md`)
 
 ## 1. Product overview
 
 VibeHarness Engine is a local-first, extensible orchestration and standards layer for AI-assisted software engineering. It defines project schemas, workflow profiles, agent adapter contracts, memory contracts, policy gates, and generated planning artifacts so that teams can run predictable idea-to-production workflows across AI coding backends.
 
-The initial implementation proves the local kernel with a mock adapter. OpenHands is the first real repo-execution control-plane integration after the adapter contract, run manifest, policy decisions, and review artifacts are stable. VibeHarness workflows define deterministic stages. ECC provides operator policy, security gates, skills governance, hooks, and approvals. Hermes acts as the adaptive outer loop for memory, skill incubation, cron, messaging, and long-running Kanban coordination.
+The initial implementation proves the local kernel with a mock adapter. **OpenCode** is the first real repo-execution adapter after the adapter contract, run manifest, policy decisions, and review artifacts are stable (revised from OpenHands — see ecosystem research 2026-06-28). VibeHarness workflows define deterministic stages. ECC instinct patterns provide operator policy enrichment via operator profiles. **Mastra** is the optional TypeScript-native orchestration upgrade path for complex graph workflows. **DeepEval + PromptFoo + Langfuse** form the quality measurement layer. **hai-guardrails** is the TypeScript-native safety library. **Mem0** is the Hermes sidecar MVP for semantic project-truth memory.
 
 ## 2. Background and rationale
 
-The current project direction is that VibeHarness should be a software-engineering harness, not merely a personal assistant. The discussion established VibeHarness as the local contract and orchestration kernel, OpenHands as the first real coding control-plane integration, deterministic workflows as the execution model, ECC as the security/operator policy layer, and Hermes as the memory, skills, cron, messaging, and Kanban sidecar.
+The current project direction is that VibeHarness should be a software-engineering harness, not merely a personal assistant. The discussion established VibeHarness as the local contract and orchestration kernel with a governance-first, execution-second model. Ecosystem research (June 2026) revised the initial adapter target from OpenHands to **OpenCode** (180K stars, MIT, Go, 75+ providers, Ollama-native, MCP-compatible) as the primary first real adapter — it is more stable on Windows, has a cleaner CLI surface for subprocess wrapping, and has stronger community validation than the previous candidates. OpenHands remains a valid secondary adapter target. **Mastra** is adopted as the TypeScript-native orchestration backend path (1.0 stable, June 2026). The quality measurement layer is defined as **DeepEval** (CI unit gates) + **PromptFoo** (red-teaming) + **Langfuse** (session tracing). **hai-guardrails** provides TypeScript-native policy enforcement at the adapter boundary.
 
 This separation matters because direct repo execution, long-term memory, workflow determinism, and safety policy are different concerns. Bundling them into one agent makes the system harder to audit and easier to drift.
 
@@ -31,11 +32,13 @@ Modern AI-assisted development often fails in five ways:
 - Provide a universal project schema for AI software-engineering workflows.
 - Convert vague intent into structured PRD, architecture, task, test, review, and handoff artifacts.
 - Run deterministic staged workflows with explicit gates and artifacts.
-- Use a mock adapter first to prove the execution contract, then OpenHands for sandboxed coding-agent execution.
-- Provide adapter contracts for future backends such as Aider, Cline, Plandex, Claude Code, Codex, and Cursor-like environments.
-- Use Hermes for memory proposals, skill incubation, long-running coordination, messaging, and scheduled work.
-- Enforce ECC-style policy gates for tools, skills, secrets, approvals, and security checks.
-- Make every run auditable through logs, artifacts, decisions, and generated summaries.
+- Use a mock adapter first to prove the execution contract, then **OpenCode** for the first real coding-agent execution (revised from OpenHands — see ecosystem research 2026-06-28).
+- Provide adapter contracts for secondary backends: OpenHands, Aider, Cline, Plandex, Claude Code, Codex.
+- Use **Mem0** as the Hermes sidecar MVP for semantic project-truth memory injection.
+- Enforce ECC-instinct-pattern-enriched policy gates (via operator profiles) for tools, skills, secrets, approvals, and security checks.
+- Apply **hai-guardrails** at the adapter boundary for TypeScript-native injection, PII, and leakage detection.
+- Measure run quality with **DeepEval** (CI gates), **PromptFoo** (adversarial), and **Langfuse** (session tracing).
+- Make every run auditable through logs, artifacts, decisions, quality scores, and generated summaries.
 
 ### User goals
 
@@ -95,12 +98,13 @@ Needs approval gates, secret handling, tool restrictions, sandbox boundaries, an
 - `vibeharness review` collects test results, diffs, review notes, policy violations, and handoff content.
 - Generated handoff files include export-ready content; a separate `export` command is deferred.
 - Basic ECC policy gates for filesystem access, shell commands, secrets, dependency changes, destructive operations, and external network use.
-- Hermes memory proposal file format, but not automatic memory writes.
+- Mem0-referenced memory proposal file format, but not automatic memory writes.
 - Draft skill quarantine and review workflow.
 
 ### Deferred capabilities
 
-- OpenHands adapter as the first real coding backend after the mock adapter proves the contract.
+- OpenHands adapter as the second real coding backend (after OpenCode proves the adapter contract).
+- Mastra orchestration integration (only if VH stage machine requires resumable graph workflows).
 - `vibeharness export` for PRs, issue trackers, docs, or Hermes ingestion.
 - Full hosted dashboard.
 - Multi-tenant auth and organization management.
@@ -109,6 +113,7 @@ Needs approval gates, secret handling, tool restrictions, sandbox boundaries, an
 - Production deployment automation.
 - Comprehensive adapter parity across every coding backend.
 - Automatic skill publishing without review.
+- Graphiti temporal knowledge graph (advanced instinct governance — watch list).
 
 ## 9. Functional requirements
 
@@ -125,10 +130,14 @@ Needs approval gates, secret handling, tool restrictions, sandbox boundaries, an
 | FR-009 | Run artifacts | P0 | Every run emits a manifest, stage logs, generated files, policy decisions, test results, review summary, and handoff. |
 | FR-010 | Handoff generation | P0 | The system generates a final handoff with changes, tests, risks, follow-ups, and proposal references. |
 | FR-011 | Evaluation fixtures | P0 | The project includes valid, invalid, passing-run, failing-run, and policy-blocked fixtures that prove the MVP loop. |
-| FR-012 | OpenHands adapter | P1 | A workflow stage can submit a coding task to OpenHands using the stable adapter contract and capture outputs, logs, diffs, and test evidence. |
-| FR-013 | Memory proposal contract | P1 | Hermes or a workflow stage can propose memory updates without committing them automatically. |
-| FR-014 | Skill incubation workflow | P1 | New or modified skills enter draft/quarantine and require policy review before promotion. |
-| FR-015 | Export command | P2 | Artifacts can be exported for PRs, issue trackers, docs, or Hermes ingestion. |
+| FR-012 | OpenCode adapter | P1 | A workflow stage can submit a coding task to OpenCode via CLI subprocess using the stable adapter contract and capture git diffs, command outputs, and test evidence. |
+| FR-012b | OpenHands adapter | P1 | Secondary adapter: a workflow stage can submit a coding task to OpenHands via REST API and capture outputs, logs, diffs, and test evidence. |
+| FR-013 | Mem0 Hermes sidecar | P1 | Mem0 provides semantic project-truth memory; facts are injected as context at stage start; new facts are proposed but not auto-committed. |
+| FR-013b | Memory proposal contract | P1 | A workflow stage can propose memory updates to Mem0 without committing them automatically. |
+| FR-014 | Quality gate layer | P1 | DeepEval assertions run post-stage; PromptFoo adversarial suite runs in CI; Langfuse traces all sessions. |
+| FR-014b | Skill incubation workflow | P1 | New or modified skills enter draft/quarantine and require policy review before promotion. |
+| FR-015 | hai-guardrails integration | P1 | Adapter boundary is wrapped with hai-guardrails for injection, PII, and leakage detection before and after LLM calls. |
+| FR-016 | Export command | P2 | Artifacts can be exported for PRs, issue trackers, docs, or Hermes ingestion. |
 
 ## 10. Non-functional requirements
 
@@ -166,7 +175,7 @@ Needs approval gates, secret handling, tool restrictions, sandbox boundaries, an
 ### Journey 3: Memory and skill learning
 
 1. A run identifies repeated project preferences, useful fixes, or workflow improvements.
-2. Hermes or the runner emits a memory or skill proposal.
+2. Mem0 or the runner emits a memory or skill proposal.
 3. ECC validates whether the proposal is safe and scoped.
 4. Human or configured policy approves promotion.
 5. Approved updates are committed to project truth.
@@ -219,10 +228,18 @@ A local or hosted dashboard can show workflow status, approvals, diffs, logs, ru
 
 ## 13. Integration requirements
 
-### OpenHands
+### OpenCode (Primary First Adapter — revised 2026-06-28)
 
 - First real coding adapter after the MVP mock adapter proves the contract.
-- Receives bounded repo tasks and context bundles.
+- Invoked as a CLI subprocess from VibeHarness's Bun/TS runner.
+- Receives bounded task spec, repo path, model target (Ollama/Qwen3-Coder), and context bundle.
+- Returns git diff, changed file list, command output, and test results via stdout/git state.
+- MCP-compatible: VibeHarness policy gates can be exposed as MCP tool endpoints.
+
+### OpenHands (Secondary Adapter)
+
+- Second real coding adapter after OpenCode proves the adapter contract shape.
+- Receives bounded repo tasks and context bundles via REST API.
 - Returns logs, files changed, diffs, command outputs, tests, and final summary.
 
 ### VibeHarness workflows
@@ -235,10 +252,23 @@ A local or hosted dashboard can show workflow status, approvals, diffs, logs, ru
 - Enforces security and operator rules before and during execution.
 - Owns tool permissions, hooks, skills, approval gates, and policy reporting.
 
-### Hermes
+### Quality Measurement Layer
 
-- Receives run summaries, handoffs, memory proposals, and scheduled task opportunities.
-- Coordinates long-running backlog or messaging workflows.
+- **DeepEval**: runs post-stage assertions against 50+ quality metrics (hallucination, task completion, faithfulness). Fail a run if quality scores fall below configured thresholds.
+- **PromptFoo**: runs adversarial/red-team suites against policy gates and adapter outputs in CI.
+- **Langfuse**: maps every VH run to a session; every stage transition emits a span with latency, cost, model choice, and policy decision.
+
+### Guardrails Layer
+
+- **hai-guardrails** (`@presidio-dev/hai-guardrails`): TypeScript-native wrapper at the adapter boundary. Guards: Injection, PII, Leakage, Toxicity, Bias.
+- Surface violations as `policy_decision: deny` in VH run manifest.
+
+### Mem0 Hermes Sidecar
+
+- Provides semantic project-truth memory across sessions.
+- Facts (style guides, instinct patterns, past mistakes) are injected as context at each stage start.
+- New facts discovered during a run are proposed but not auto-committed.
+- Replaces the abstract "Hermes" contract with a concrete, self-hostable integration.
 - Does not directly update committed project truth without review.
 
 ## 14. Data model overview
@@ -274,6 +304,9 @@ Core entities:
 - Percentage of workflow runs that pass required tests and policy gates.
 - Human acceptance rate of generated plans and PR summaries.
 - Number of security policy violations caught before execution.
+- **DeepEval hallucination score** per run (target: < 0.1 hallucination rate on coding tasks).
+- **Task completion delta**: VH-governed OpenCode vs. ungoverned OpenCode on 5 canonical tasks (Day 90 benchmark).
+- **Langfuse session trace coverage**: 100% of runs must have a recoverable session trace.
 
 ### Fixture metrics
 
@@ -311,7 +344,11 @@ MVP is ready when:
 ## 17. Open assumptions
 
 - Initial users are technical and comfortable with CLI and Git.
-- OpenHands can expose the adapter hooks VibeHarness needs, but MVP success does not depend on that integration.
+- OpenCode exposes a stable enough CLI surface for VibeHarness subprocess wrapping; MVP success does not depend on REST API availability.
+- OpenHands remains the secondary adapter target; it can be pursued in parallel with OpenCode without blocking core contract work.
 - Workflow compatibility means deterministic stage semantics, not a hard dependency on a specific external runtime for MVP.
-- ECC is implemented first as policy files, hooks, and gates; deeper operator runtime can evolve later.
-- Hermes begins as a sidecar contract and optional integration, not as a required dependency for core runs.
+- ECC instinct patterns are absorbed into VH operator profiles; a live ECC runtime is not required.
+- Mem0 self-hosted deployment is stable enough for local development use; cloud Mem0 is not required.
+- Mastra's Node.js compatibility with Bun is assumed high but must be verified with an integration spike before committing to it as a dependency.
+- hai-guardrails maintenance velocity must be monitored for 4–6 weeks before promoting it to a required dependency.
+- Qwen3-Coder-27B via Ollama is the primary local model for all integration testing and benchmarking.

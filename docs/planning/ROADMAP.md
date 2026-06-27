@@ -1,6 +1,7 @@
 # Roadmap
 
 Generated: 2026-06-13
+Revised: 2026-06-28 (ecosystem research update — see `docs/planning/research/ecosystem-landscape-2026-06-28.md`)
 
 ## Phase 0: Foundation decisions and repo skeleton
 
@@ -34,9 +35,9 @@ Implementation starts with P0 and stays on P0 until the MVP acceptance set passe
 - `AC-MVP-005`: policy-blocked or approval-required fixture.
 - `AC-MVP-006`: review and handoff.
 
-Do not start OpenHands, exports, Hermes sidecar work, adapter expansion, hosted UI, or automatic memory/skill promotion until the P0 mock-adapter loop is implemented and tested.
+Do not start a roadmap slice unless its dependency chain is implemented, tested, and represented in `TRACEABILITY.md` plus `tasks.yaml`. The first real-adapter slice is Phase 5A/5B: foundation hardening, then OpenCode.
 
-Current repository status: the P0 CLI loop is implemented and covered by `bun run validate`. Phase 5+ remains deferred until the project intentionally starts real adapter work.
+Current repository status: the P0 CLI loop is implemented and covered by `bun run validate`. Phase 5+ is now unblocked. Ecosystem research (2026-06-28) has revised the Phase 5 target from OpenHands to **OpenCode** as the primary first adapter, with a layered quality measurement and guardrails build-out across Phases 5A–5E.
 
 ## Phase 1: Core schemas and CLI validation
 
@@ -125,79 +126,157 @@ Complete the core local loop with reviewable evidence and concrete policy decisi
 - Policy violation fixture is blocked.
 - Approval-required fixture pauses and records the approval decision.
 
-## Phase 5: OpenHands adapter
+## Phase 5: Real Adapter Integration & Quality Foundation
 
-### Goal
+> Revised 2026-06-28 — OpenCode replaces OpenHands as primary first adapter. See ecosystem research.
 
-Use OpenHands as the first real coding execution backend after the adapter contract is stable.
+### Phase 5A: Foundation Hardening (Days 1–7)
 
-### Deliverables
+**Goal:** Fix known technical debts before connecting real backends.
+
+**Deliverables:**
+
+- Replace `simple-yaml.ts` with `js-yaml` (eliminates anchor/alias correctness risk).
+- Implement resume-after-approval: after `approve --outcome approved`, execution continues from the blocked stage.
+- Add partial failure simulation to mock adapter (stage N passes, stage N+1 fails).
+- Deepen test coverage: adapter contract tests, policy golden fixtures, artifact content validation.
+
+**Exit criteria:**
+
+- `bun run test` covers adapter contract, policy decisions, and artifact content (not just file existence).
+- Approved runs resume correctly from previously blocked stages.
+
+### Phase 5B: OpenCode Subprocess Adapter (Days 8–21)
+
+**Goal:** Connect the first real coding execution backend.
+
+**Deliverables:**
+
+- OpenCode adapter config (`.vibeharness/adapters/opencode.yaml`).
+- Subprocess adapter wrapper: translate `adapter-task.yaml` → OpenCode CLI invocation.
+- Context bundle injector: pass repo path, task spec, model target (Qwen3-Coder via Ollama), policy hints.
+- Result normalizer: capture git diff, changed files, stdout, test results into `RunResult`.
+- Integration fixture: golden task run against a sample repo.
+
+**Exit criteria:**
+
+- A sample repo feature runs through `vibeharness run --adapter opencode` and produces a complete run manifest.
+- Git diff is captured and stored in the run artifact directory.
+
+### Phase 5C: Quality Measurement Layer (Days 22–42)
+
+**Goal:** Prove VibeHarness improves AI output quality measurably.
+
+**Deliverables:**
+
+- PromptFoo config per VH workflow stage (2–3 days); golden-path acceptance suite + policy adversarial suite.
+- DeepEval post-stage quality assertions: hallucination score, task completion rate, faithfulness (3–5 days).
+- Langfuse session tracing: every run maps to a session; every stage emits a span (2–4 days).
+- Day 90 benchmark fixture: same task, VH-governed OpenCode vs. ungoverned OpenCode, 5 DeepEval metrics.
+
+**Exit criteria:**
+
+- CI fails if hallucination score > configured threshold.
+- Every run produces a recoverable Langfuse session trace.
+- Benchmark shows measurable quality delta on ≥ 3 of 5 metrics.
+
+### Phase 5D: Guardrails & ECC Operator Profile Enrichment (Days 43–70)
+
+**Goal:** Add TypeScript-native policy enforcement and operator context enrichment.
+
+**Deliverables:**
+
+- Integrate `hai-guardrails` at the adapter boundary (Injection, PII, Leakage, Toxicity, Bias guards).
+- Surface guardrail violations as `policy_decision: deny` in run manifest.
+- Port ECC instinct file pattern into VH operator profile extensions:
+  - Instinct files: session-extracted patterns with confidence scores stored in operator profile.
+  - Pre-stage context injection from committed instinct files.
+
+**Exit criteria:**
+
+- Guardrail violations appear in run artifacts and block execution.
+- At least 3 instinct files are committed to the default operator profile and injected at stage start.
+
+### Phase 5E: Mem0 Hermes Sidecar (Days 71–80)
+
+**Goal:** Connect concrete semantic project-truth memory (replaces abstract Hermes contract).
+
+**Deliverables:**
+
+- Mem0 self-hosted deployment guide.
+- Context injector: query Mem0 for relevant facts at stage start; inject into task context.
+- Proposal exporter: discovered run facts proposed to Mem0 but not auto-committed.
+- Memory proposal schema update: include Mem0 memory IDs as references.
+
+**Exit criteria:**
+
+- At least one project-truth fact is queried from Mem0 and injected into an OpenCode run context.
+- Memory proposals appear in run handoff and require explicit approval before committing.
+
+## Phase 6: OpenHands Adapter
+
+**Goal:** Add OpenHands as the second real coding execution backend (Docker-isolated, REST API).
+
+**Deliverables:**
 
 - OpenHands adapter config.
-- Task package generator.
-- Result normalizer.
-- Log collector.
-- Changed file/diff capture.
-- Test evidence capture.
+- REST adapter wrapper: translate `adapter-task.yaml` → OpenHands API invocation.
+- Result normalizer: capture logs, diffs, test evidence into `RunResult`.
+- Docker environment setup guide.
+- Integration fixture: same sample task as Phase 5B run through OpenHands for comparison.
 
-### Exit criteria
+**Exit criteria:**
 
-- A sample repo feature can be executed through OpenHands and return a normalized result.
+- Same task can run through both `--adapter opencode` and `--adapter openhands` and produce comparable `RunResult` shapes.
 
-## Phase 6: Export and memory/skill proposals
+## Phase 7: Export and memory/skill proposals
 
-### Goal
+**Goal:** Package completed runs for downstream review and safe learning loops.
 
-Package completed runs for downstream review and safe learning loops.
-
-### Deliverables
+**Deliverables:**
 
 - PR description generator.
 - `vibeharness export`.
-- Memory proposal exporter.
+- Memory proposal exporter (Mem0-referenced).
 - Skill proposal exporter.
 
-### Exit criteria
+**Exit criteria:**
 
 - Exported PR descriptions, memory proposals, and skill proposals reference run artifacts and policy decisions.
 
-## Phase 7: Hermes sidecar integration
+## Phase 8: Mastra Orchestration Upgrade (Conditional)
 
-### Goal
+**Goal:** Graduate VibeHarness's stage machine to a full graph-based orchestration backend if needed.
 
-Connect long-running memory and coordination without making Hermes the execution plane.
+**Trigger condition:** Only pursue if VH's deterministic linear stage machine becomes insufficient for real-world workflows requiring branching subgraphs, resumable long-running state, or parallel stage execution.
 
-### Deliverables
+**Deliverables:**
 
-- Hermes export format.
-- Memory proposal handoff.
-- Skill proposal handoff.
-- Scheduled health-check workflow definition.
-- Kanban task export/import prototype.
+- Mastra integration spike: verify Bun compatibility.
+- Port VH stage definitions to Mastra `.then()/.branch()/.parallel()` chains.
+- Preserve existing run manifest schema (Mastra is a backend, not a contract change).
 
-### Exit criteria
+**Exit criteria:**
 
-- Hermes can consume VibeHarness run summaries and propose follow-up actions without directly mutating project truth.
+- A VH workflow with branching stages runs through Mastra and produces identical run artifacts to the current stage runner.
 
-## Phase 8: Adapter expansion
+## Phase 9: Adapter expansion
 
-### Goal
+**Goal:** Prove the universal adapter model across 3+ backends.
 
-Prove the universal adapter model.
+**Candidate adapters (ranked by VH-fit score from ecosystem research):**
 
-### Candidate adapters
+- Aider (Apache-2.0, CLI subprocess, 2–4 days, lightest integration).
+- Cline (MIT, VS Code extension, MCP-compatible).
+- Claude Code (Anthropic SDK).
+- Plandex (open-source, multi-file planning).
+- Codex CLI.
 
-- Aider.
-- Cline.
-- Plandex.
-- Claude Code.
-- Codex.
+**Exit criteria:**
 
-### Exit criteria
+- At least two non-OpenCode adapters can run a bounded task and return normalized `RunResult` shapes.
 
-- At least one non-OpenHands adapter can run a bounded task and return normalized results.
-
-## Phase 9: UI / hosted control plane exploration
+## Phase 10: UI / hosted control plane exploration
 
 ### Goal
 

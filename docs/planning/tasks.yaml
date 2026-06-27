@@ -292,7 +292,126 @@ tasks:
       - vibeharness run --workflow policy-blocked --adapter mock
     estimate: M
     owner_role: developer
+  - id: VH-050
+    epic: E6
+    phase: 5
+    title: Foundation hardening for real adapters
+    priority: P1
+    status: ready
+    prd_refs: [FR-003, FR-007, FR-008]
+    depends_on: [VH-042, VH-100]
+    acceptance_ids: [AC-P1-050]
+    artifacts:
+      - src/simple-yaml.ts
+      - src/approval.ts
+      - tests/policy.test.ts
+      - tests/p0-loop.test.ts
+    validation:
+      - bun run validate
+      - approved policy-blocked run resumes from the blocked stage
+      - mock adapter partial-failure fixture records the failing stage
+    estimate: L
+    owner_role: developer
+  - id: VH-051
+    epic: E6
+    phase: 5
+    title: OpenCode adapter config
+    priority: P1
+    status: ready
+    prd_refs: [FR-012]
+    depends_on: [VH-050]
+    acceptance_ids: [AC-P1-051]
+    artifacts:
+      - .vibeharness/adapters/opencode.yaml
+      - schemas/adapter.schema.json
+    validation:
+      - vibeharness validate .
+      - vibeharness validate fixtures/vibeharness-starter
+    estimate: M
+    owner_role: developer
+  - id: VH-052
+    epic: E6
+    phase: 5
+    title: OpenCode subprocess adapter wrapper
+    priority: P1
+    status: ready
+    prd_refs: [FR-012]
+    depends_on: [VH-051]
+    acceptance_ids: [AC-P1-052]
+    artifacts:
+      - src/run.ts
+      - .vibeharness/runs/<run_id>/opencode-result.json
+    validation:
+      - vibeharness run --workflow default-feature --adapter opencode
+      - git diff and command output are captured in the run artifacts
+    estimate: L
+    owner_role: developer
+  - id: VH-053
+    epic: E6
+    phase: 5
+    title: OpenCode integration fixture
+    priority: P1
+    status: ready
+    prd_refs: [FR-012]
+    depends_on: [VH-052]
+    acceptance_ids: [AC-P1-053]
+    artifacts:
+      - fixtures/opencode-default-feature/
+    validation:
+      - vibeharness run --workflow default-feature --adapter opencode
+      - vibeharness review --run latest
+    estimate: M
+    owner_role: qa
   - id: VH-060
+    epic: E6b
+    phase: 6
+    title: OpenHands REST adapter wrapper
+    priority: P1
+    status: blocked
+    blocked_reason: Secondary backend starts after OpenCode proves the adapter contract shape.
+    prd_refs: [FR-012b]
+    depends_on: [VH-053]
+    acceptance_ids: [AC-P1-060]
+    artifacts:
+      - .vibeharness/adapters/openhands.yaml
+    validation:
+      - vibeharness run --workflow default-feature --adapter openhands
+    estimate: L
+    owner_role: developer
+  - id: VH-061
+    epic: E6b
+    phase: 6
+    title: OpenHands result normalizer
+    priority: P1
+    status: blocked
+    blocked_reason: Depends on a working OpenHands wrapper and comparable OpenCode artifacts.
+    prd_refs: [FR-012b]
+    depends_on: [VH-060]
+    acceptance_ids: [AC-P1-061]
+    artifacts:
+      - .vibeharness/runs/<run_id>/openhands-result.json
+    validation:
+      - vibeharness run --workflow default-feature --adapter openhands
+    estimate: L
+    owner_role: developer
+  - id: VH-062
+    epic: E6b
+    phase: 6
+    title: OpenHands integration fixture
+    priority: P1
+    status: blocked
+    blocked_reason: Depends on normalized OpenHands results.
+    prd_refs: [FR-012b]
+    depends_on: [VH-061]
+    acceptance_ids: [AC-P1-062]
+    artifacts:
+      - fixtures/openhands-default-feature/
+    validation:
+      - vibeharness run --workflow default-feature --adapter openhands
+      - OpenHands and OpenCode runs return comparable RunResult shapes
+    estimate: M
+    owner_role: qa
+  - id: VH-070
     epic: E7
     phase: 4
     title: Implement ECC-lite policy classifier
@@ -307,14 +426,14 @@ tasks:
       - vibeharness run --workflow policy-blocked --adapter mock
     estimate: M
     owner_role: security
-  - id: VH-061
+  - id: VH-071
     epic: E7
     phase: 4
     title: Implement approval-required state
     priority: P0
     status: done
     prd_refs: [FR-008]
-    depends_on: [VH-040, VH-060]
+    depends_on: [VH-040, VH-070]
     acceptance_ids: [AC-MVP-005]
     artifacts:
       - .vibeharness/runs/<run_id>/policy-decisions/*.json
@@ -324,14 +443,14 @@ tasks:
       - test -f .vibeharness/runs/latest/approval-request.json
     estimate: M
     owner_role: security
-  - id: VH-062
+  - id: VH-072
     epic: E7
     phase: 4
     title: Emit policy audit report
     priority: P0
     status: done
     prd_refs: [FR-008, FR-009, FR-010]
-    depends_on: [VH-060, VH-061]
+    depends_on: [VH-070, VH-071]
     acceptance_ids: [AC-MVP-005, AC-MVP-006]
     artifacts:
       - .vibeharness/runs/<run_id>/policy-audit.md
@@ -339,14 +458,14 @@ tasks:
       - vibeharness review --run latest
     estimate: S
     owner_role: security
-  - id: VH-070
+  - id: VH-080
     epic: E8
     phase: 4
     title: Implement review generator
     priority: P0
     status: done
     prd_refs: [FR-010]
-    depends_on: [VH-041, VH-042, VH-062]
+    depends_on: [VH-041, VH-042, VH-072]
     acceptance_ids: [AC-MVP-006]
     artifacts:
       - .vibeharness/runs/<run_id>/review.md
@@ -354,14 +473,14 @@ tasks:
       - vibeharness review --run latest
     estimate: M
     owner_role: developer
-  - id: VH-071
+  - id: VH-081
     epic: E8
     phase: 4
     title: Implement handoff generator
     priority: P0
     status: done
     prd_refs: [FR-010]
-    depends_on: [VH-070]
+    depends_on: [VH-080]
     acceptance_ids: [AC-MVP-006]
     artifacts:
       - .vibeharness/runs/<run_id>/handoff.md
@@ -369,16 +488,16 @@ tasks:
       - vibeharness review --run latest
     estimate: M
     owner_role: developer
-  - id: VH-072
+  - id: VH-082
     epic: E8
-    phase: 6
-    title: Implement PR description generator
+    phase: 7
+    title: PR description generator
     priority: P1
     status: blocked
-    blocked_reason: PR/export packaging starts only after P0 review and handoff artifacts are stable.
-    prd_refs: [FR-015]
-    depends_on: [VH-071]
-    acceptance_ids: []
+    blocked_reason: Export packaging starts after run artifacts and proposal formats are stable.
+    prd_refs: [FR-016]
+    depends_on: [VH-081, VH-092]
+    acceptance_ids: [AC-P1-082]
     artifacts:
       - .vibeharness/runs/<run_id>/exports/pr-description.md
     validation:
@@ -386,13 +505,95 @@ tasks:
     estimate: M
     owner_role: developer
   - id: VH-090
+    epic: E9
+    phase: 5
+    title: Mem0 self-hosted deployment guide
+    priority: P1
+    status: blocked
+    blocked_reason: Memory sidecar work starts after the OpenCode adapter fixture proves the real adapter path.
+    prd_refs: [FR-013]
+    depends_on: [VH-053]
+    acceptance_ids: [AC-P1-090]
+    artifacts:
+      - docs/planning/mem0-deployment.md
+    validation:
+      - Mem0 local smoke check connects from VibeHarness
+    estimate: M
+    owner_role: analyst
+  - id: VH-091
+    epic: E9
+    phase: 5
+    title: Mem0 context injector
+    priority: P1
+    status: blocked
+    blocked_reason: Depends on a local Mem0 deployment guide and stable OpenCode context bundles.
+    prd_refs: [FR-013]
+    depends_on: [VH-090, VH-053]
+    acceptance_ids: [AC-P1-091]
+    artifacts:
+      - context bundle memory section
+    validation:
+      - OpenCode run receives one Mem0 project-truth fact in context
+    estimate: M
+    owner_role: developer
+  - id: VH-092
+    epic: E9
+    phase: 5
+    title: Memory proposal format with Mem0 references
+    priority: P1
+    status: blocked
+    blocked_reason: Proposal format starts after context injection is proven and remains proposal-only.
+    prd_refs: [FR-013b]
+    depends_on: [VH-091, VH-081]
+    acceptance_ids: [AC-P1-092]
+    artifacts:
+      - .vibeharness/runs/<run_id>/memory-proposals/<proposal-id>.md
+    validation:
+      - vibeharness review --run latest
+      - memory proposal schema fixture validates
+    estimate: M
+    owner_role: analyst
+  - id: VH-093
+    epic: E9
+    phase: 5
+    title: Skill proposal format
+    priority: P1
+    status: blocked
+    blocked_reason: Skill proposals remain quarantined until review and policy artifacts are stable.
+    prd_refs: [FR-014b]
+    depends_on: [VH-081, VH-072]
+    acceptance_ids: [AC-P1-093]
+    artifacts:
+      - .vibeharness/runs/<run_id>/skill-proposals/<skill-name>.md
+    validation:
+      - vibeharness review --run latest
+      - skill proposal fixture validates
+    estimate: M
+    owner_role: analyst
+  - id: VH-094
+    epic: E9
+    phase: 7
+    title: Hermes export prototype
+    priority: P2
+    status: blocked
+    blocked_reason: Hermes remains an export/interchange target after Mem0-referenced proposals exist.
+    prd_refs: [FR-016]
+    depends_on: [VH-092, VH-093]
+    acceptance_ids: [AC-P2-094]
+    artifacts:
+      - .vibeharness/runs/<run_id>/exports/hermes-summary.json
+    validation:
+      - vibeharness export --run latest --target hermes
+    estimate: M
+    owner_role: analyst
+  - id: VH-100
     epic: E10
     phase: 4
-    title: Add golden fixture workflows
+    title: Golden fixture workflows
     priority: P0
     status: done
     prd_refs: [FR-011]
-    depends_on: [VH-021, VH-042, VH-071]
+    depends_on: [VH-021, VH-042, VH-081]
     acceptance_ids: [AC-MVP-002, AC-MVP-003, AC-MVP-004, AC-MVP-005, AC-MVP-006]
     artifacts:
       - fixtures/vibeharness-starter/
@@ -407,112 +608,16 @@ tasks:
       - vibeharness review --run latest
     estimate: L
     owner_role: qa
-  - id: VH-050
-    epic: E6
-    phase: 5
-    title: Implement OpenHands task package generator
-    priority: P1
-    status: blocked
-    blocked_reason: P1 work starts only after all P0 acceptance IDs AC-MVP-001 through AC-MVP-006 pass with the mock adapter.
-    prd_refs: [FR-012]
-    depends_on: [VH-042, VH-090]
-    acceptance_ids: []
-    artifacts:
-      - .vibeharness/adapters/openhands.yaml
-    validation:
-      - vibeharness run --workflow default-feature --adapter openhands
-    estimate: L
-    owner_role: developer
-  - id: VH-051
-    epic: E6
-    phase: 5
-    title: Normalize OpenHands result
-    priority: P1
-    status: blocked
-    blocked_reason: Depends on stable P0 adapter-task and run artifact contracts proven by VH-090.
-    prd_refs: [FR-012]
-    depends_on: [VH-050, VH-090]
-    acceptance_ids: []
-    artifacts:
-      - .vibeharness/runs/<run_id>/openhands-result.json
-    validation:
-      - vibeharness run --workflow default-feature --adapter openhands
-    estimate: L
-    owner_role: developer
-  - id: VH-052
-    epic: E6
-    phase: 5
-    title: Add OpenHands integration fixture
-    priority: P1
-    status: blocked
-    blocked_reason: Depends on a normalized OpenHands result and completed P0 fixture suite.
-    prd_refs: [FR-012]
-    depends_on: [VH-051, VH-090]
-    acceptance_ids: []
-    artifacts:
-      - fixtures/openhands-default-feature/
-    validation:
-      - vibeharness run --workflow default-feature --adapter openhands
-    estimate: M
-    owner_role: qa
-  - id: VH-080
-    epic: E9
-    phase: 6
-    title: Implement memory proposal format
-    priority: P1
-    status: blocked
-    blocked_reason: P1 proposal formats start after P0 review and handoff artifacts are stable.
-    prd_refs: [FR-013]
-    depends_on: [VH-071]
-    acceptance_ids: []
-    artifacts:
-      - .vibeharness/runs/<run_id>/memory-proposals/<proposal-id>.md
-    validation:
-      - vibeharness review --run latest
-    estimate: M
-    owner_role: analyst
-  - id: VH-081
-    epic: E9
-    phase: 6
-    title: Implement skill proposal format
-    priority: P1
-    status: blocked
-    blocked_reason: P1 proposal formats start after P0 review and handoff artifacts are stable.
-    prd_refs: [FR-014]
-    depends_on: [VH-071]
-    acceptance_ids: []
-    artifacts:
-      - .vibeharness/runs/<run_id>/skill-proposals/<skill-name>.md
-    validation:
-      - vibeharness review --run latest
-    estimate: M
-    owner_role: analyst
-  - id: VH-082
-    epic: E9
-    phase: 6
-    title: Implement Hermes export prototype
-    priority: P2
-    status: blocked
-    blocked_reason: Export work starts only after P0 and P1 proposal formats are validated.
-    prd_refs: [FR-015]
-    depends_on: [VH-080, VH-081]
-    acceptance_ids: []
-    artifacts:
-      - .vibeharness/runs/<run_id>/exports/hermes-summary.json
-    validation:
-      - vibeharness export --run latest --target hermes
-    estimate: M
-    owner_role: analyst
-  - id: VH-091
+  - id: VH-101
     epic: E10
     phase: 6
-    title: Add quality gate tests
+    title: Quality gate tests
     priority: P1
     status: blocked
-    blocked_reason: Quality gate expansion starts after the P0 golden fixture suite exists.
+    blocked_reason: Quality gate expansion starts after golden fixtures and OpenCode runs are stable.
     prd_refs: [FR-011]
-    depends_on: [VH-090]
-    acceptance_ids: []
+    depends_on: [VH-100, VH-053]
+    acceptance_ids: [AC-P1-101]
     artifacts:
       - tests/quality-gates/
     validation:
@@ -520,16 +625,16 @@ tasks:
       - vibeharness run --workflow default-feature --adapter mock
     estimate: M
     owner_role: qa
-  - id: VH-092
+  - id: VH-102
     epic: E10
     phase: 6
-    title: Add regression harness
+    title: Regression harness
     priority: P1
     status: blocked
-    blocked_reason: Regression harness starts after P0 fixture workflows produce stable artifacts.
+    blocked_reason: Regression harness starts after fixture workflows produce stable artifacts.
     prd_refs: [FR-011]
-    depends_on: [VH-090]
-    acceptance_ids: []
+    depends_on: [VH-100]
+    acceptance_ids: [AC-P1-102]
     artifacts:
       - tests/regression/
       - fixtures/regressions/
@@ -537,3 +642,117 @@ tasks:
       - vibeharness run --workflow default-feature --adapter mock
     estimate: M
     owner_role: qa
+  - id: VH-110
+    epic: E11
+    phase: 5
+    title: PromptFoo CI integration
+    priority: P1
+    status: blocked
+    blocked_reason: PromptFoo starts after OpenCode has a stable integration fixture.
+    prd_refs: [FR-014]
+    depends_on: [VH-053]
+    acceptance_ids: [AC-P1-110]
+    artifacts:
+      - promptfoo config per workflow stage
+    validation:
+      - PromptFoo golden-path and policy adversarial suites pass in CI
+    estimate: M
+    owner_role: qa
+  - id: VH-111
+    epic: E11
+    phase: 5
+    title: DeepEval post-stage quality assertions
+    priority: P1
+    status: blocked
+    blocked_reason: DeepEval starts after OpenCode run artifacts expose stable stage outputs.
+    prd_refs: [FR-014]
+    depends_on: [VH-053]
+    acceptance_ids: [AC-P1-111]
+    artifacts:
+      - post-stage quality assertion output
+    validation:
+      - CI fails when hallucination score exceeds configured threshold
+    estimate: M
+    owner_role: qa
+  - id: VH-112
+    epic: E11
+    phase: 5
+    title: Langfuse session tracing
+    priority: P1
+    status: blocked
+    blocked_reason: Tracing starts after run stage boundaries and OpenCode artifacts are stable.
+    prd_refs: [FR-014]
+    depends_on: [VH-053]
+    acceptance_ids: [AC-P1-112]
+    artifacts:
+      - Langfuse session and stage spans
+    validation:
+      - complete run can be reconstructed from trace data
+    estimate: M
+    owner_role: developer
+  - id: VH-113
+    epic: E11
+    phase: 5
+    title: Day 90 benchmark fixture
+    priority: P1
+    status: blocked
+    blocked_reason: Benchmark starts after PromptFoo, DeepEval, and Langfuse integrations exist.
+    prd_refs: [FR-014]
+    depends_on: [VH-110, VH-111, VH-112]
+    acceptance_ids: [AC-P1-113]
+    artifacts:
+      - fixtures/benchmarks/day-90/
+    validation:
+      - VH-governed OpenCode scores better than raw OpenCode on at least 3 of 5 metrics
+    estimate: L
+    owner_role: qa
+  - id: VH-120
+    epic: E12
+    phase: 5
+    title: hai-guardrails adapter boundary integration
+    priority: P1
+    status: blocked
+    blocked_reason: Guardrails start after OpenCode prompt-building and policy decision artifacts are stable.
+    prd_refs: [FR-015]
+    depends_on: [VH-053, VH-072]
+    acceptance_ids: [AC-P1-120]
+    artifacts:
+      - guardrail policy decisions
+    validation:
+      - injection fixture is blocked with policy_decision deny
+    estimate: M
+    owner_role: security
+  - id: VH-121
+    epic: E12
+    phase: 5
+    title: ECC instinct file pattern in operator profiles
+    priority: P1
+    status: blocked
+    blocked_reason: Instinct enrichment starts after guardrail decisions and operator profiles are stable.
+    prd_refs: [FR-015]
+    depends_on: [VH-120]
+    acceptance_ids: [AC-P1-121]
+    artifacts:
+      - .vibeharness/profiles/*.yaml
+      - schemas/operator-profile.schema.json
+    validation:
+      - operator profile schema validates instincts array
+      - default profile injects at least 3 committed instincts
+    estimate: M
+    owner_role: security
+  - id: VH-122
+    epic: E12
+    phase: 7
+    title: MCP tool endpoint for VibeHarness policy gates
+    priority: P2
+    status: blocked
+    blocked_reason: Watch-list item; starts only after adapter-boundary policy gates are stable.
+    prd_refs: [FR-015]
+    depends_on: [VH-120]
+    acceptance_ids: [AC-P2-122]
+    artifacts:
+      - MCP-compatible policy gate endpoint
+    validation:
+      - MCP-compatible agent can call VibeHarness policy checks
+    estimate: L
+    owner_role: security

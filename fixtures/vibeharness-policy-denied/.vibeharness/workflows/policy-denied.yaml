@@ -1,0 +1,10 @@
+schemaVersion: v1alpha1
+name: policy-denied
+stages:
+  - id: secret-read
+    name: Secret read denial check
+    required: true
+    adapter: mock
+    operatorProfile: ecc-implementation
+    outputs:
+      - .vibeharness/runs/latest/policy-decisions/secret-read.json

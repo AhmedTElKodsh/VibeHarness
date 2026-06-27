@@ -1,6 +1,11 @@
 {
-  "runId": "20260614003747",
+  "runId": "20260614193127",
   "decisionId": "destructive-command",
-  "reason": "Mock fixture requested a destructive command.",
+  "stageId": "destructive-command",
+  "actionType": "command",
+  "resource": "rm -rf build",
+  "reason": "Destructive shell commands require explicit policy handling.",
+  "policyRuleId": "commands.destructive",
+  "requestedApprovalActor": "human",
   "command": "rm -rf build"
 }

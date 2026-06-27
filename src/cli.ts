@@ -1,6 +1,8 @@
 #!/usr/bin/env bun
 
 import { resolve } from "node:path";
+import { recordApprovalOutcome } from "./approval";
+import { compileWorkflow } from "./compile";
 import { writeValidationFixtures } from "./fixtures";
 import { initProject } from "./init";
 import { generatePlanArtifacts } from "./plan";
@@ -20,6 +22,8 @@ function printUsage(): void {
   console.log("  plan --idea <path>");
   console.log("  run --workflow <name> --adapter <name>");
   console.log("  review --run <latest|run_id>");
+  console.log("  compile --workflow <name> --target archon");
+  console.log("  approve --run <latest|run_id> --decision <id> --outcome <approved|rejected> --actor <name> [--reason <text>]");
 }
 
 function readOption(args: readonly string[], name: string): string | undefined {
@@ -100,6 +104,34 @@ try {
       const runRef = readOption(args, "--run") ?? "latest";
       const artifacts = generateReview(process.cwd(), runRef);
       console.log(`Review artifacts written: ${artifacts.length}`);
+      process.exit(0);
+      break;
+    }
+    case "compile": {
+      const workflow = readOption(args, "--workflow");
+      const target = readOption(args, "--target");
+      if (workflow === undefined || target === undefined) {
+        throw new Error("Missing required --workflow <name> or --target <name>.");
+      }
+      const artifact = compileWorkflow(process.cwd(), workflow, target);
+      console.log(`Compile artifact written: ${artifact}`);
+      process.exit(0);
+      break;
+    }
+    case "approve": {
+      const runRef = readOption(args, "--run") ?? "latest";
+      const decision = readOption(args, "--decision");
+      const outcome = readOption(args, "--outcome");
+      const actor = readOption(args, "--actor");
+      const reason = readOption(args, "--reason") ?? "No reason provided.";
+      if (decision === undefined || outcome === undefined || actor === undefined) {
+        throw new Error("Missing required --decision <id>, --outcome <approved|rejected>, or --actor <name>.");
+      }
+      if (outcome !== "approved" && outcome !== "rejected") {
+        throw new Error("Expected --outcome approved or rejected.");
+      }
+      const approvalOutcome = recordApprovalOutcome(process.cwd(), runRef, decision, outcome, actor, reason);
+      console.log(`Approval ${approvalOutcome.outcome} for decision ${approvalOutcome.decisionId}.`);
       process.exit(0);
       break;
     }

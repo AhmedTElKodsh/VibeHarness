@@ -4,11 +4,13 @@ stages:
   - id: intake
     name: Intake
     required: true
+    operatorProfile: ecc-planning
     outputs:
       - docs/prd.md
   - id: architecture
     name: Architecture
     required: true
+    operatorProfile: ecc-planning
     outputs:
       - docs/architecture.md
       - docs/risk-register.md
@@ -16,11 +18,13 @@ stages:
     name: Mock implementation
     required: true
     adapter: mock
+    operatorProfile: ecc-implementation
     outputs:
       - .vibeharness/runs/latest/adapter-task.yaml
   - id: review
     name: Review and handoff
     required: true
+    operatorProfile: ecc-review
     outputs:
       - .vibeharness/runs/latest/review.md
       - .vibeharness/runs/latest/handoff.md

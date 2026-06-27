@@ -1,0 +1,10 @@
+schemaVersion: v1alpha1
+name: policy-quarantined
+stages:
+  - id: memory-update
+    name: Memory quarantine check
+    required: true
+    adapter: mock
+    operatorProfile: ecc-review
+    outputs:
+      - .vibeharness/runs/latest/policy-decisions/memory-update.json

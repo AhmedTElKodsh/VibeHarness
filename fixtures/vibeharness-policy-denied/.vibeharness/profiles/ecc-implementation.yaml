@@ -1,0 +1,13 @@
+schemaVersion: v1alpha1
+name: ecc-implementation
+skills:
+  approved:
+    - deterministic-implementation
+    - test-runner
+hooks:
+  pre_stage:
+    - policy-preflight
+  post_stage:
+    - policy-audit
+memory:
+  mode: proposal_only

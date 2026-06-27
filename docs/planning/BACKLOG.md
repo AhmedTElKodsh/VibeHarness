@@ -1,6 +1,7 @@
 # Initial Backlog
 
 Generated: 2026-06-13
+Revised: 2026-06-28 (ecosystem research update — see `docs/planning/research/ecosystem-landscape-2026-06-28.md`)
 
 ## Backlog role
 
@@ -8,9 +9,8 @@ This file is the human-readable backlog. `tasks.yaml` is the machine-readable im
 
 Priority rule:
 
-- P0 proves the MVP kernel with the mock adapter.
-- Implement and test all P0 tasks first. P1/P2 work stays blocked until `AC-MVP-001` through `AC-MVP-006` pass through the named validation commands or fixtures.
-- P1 integrates first real backends such as OpenHands after the contract is stable.
+- P0 proves the MVP kernel with the mock adapter. **P0 is complete.**
+- P1 integrates the first real backends and builds the quality measurement layer. **Phase 5 is now unblocked** — primary target is OpenCode, not OpenHands.
 - P2 improves ergonomics, export, and broader ecosystem reach.
 - `tasks.yaml` is the machine-readable queue. Any backlog item not represented there is not schedulable.
 
@@ -198,9 +198,25 @@ Acceptance criteria:
 
 - Enables deterministic passing, failing, and policy-blocked fixture tests without an external backend.
 
-## Epic E6: OpenHands adapter
+## Epic E6: OpenCode Adapter (Primary First Real Adapter)
 
-### VH-050: Generate OpenHands task package
+> Revised 2026-06-28 — OpenCode replaces OpenHands as primary Phase 5 target.
+> Rationale: 180K GitHub stars, MIT, Go binary, 75+ providers, Ollama-native, CLI-callable from Bun subprocess, MCP-compatible, more stable on Windows than Goose.
+
+### VH-050: Foundation hardening (Phase 5A)
+
+Priority: P1
+
+PRD refs: FR-003, FR-007, FR-008
+
+Acceptance criteria:
+
+- Replace `simple-yaml.ts` with `js-yaml`; all existing tests pass.
+- Resume-after-approval: `approve --outcome approved` continues execution from blocked stage.
+- Mock adapter supports partial failure simulation (stage N passes, stage N+1 fails).
+- Test suite covers adapter contract tests and artifact content validation (not just file existence).
+
+### VH-051: OpenCode adapter config
 
 Priority: P1
 
@@ -208,34 +224,71 @@ PRD refs: FR-012
 
 Acceptance criteria:
 
-- Consumes the stable `adapter-task.yaml` contract.
-- Includes bounded task, repo path, context files, acceptance criteria, tests, and policy hints.
+- `.vibeharness/adapters/opencode.yaml` validates against the adapter schema.
+- Config captures: CLI path, model target, Ollama endpoint, timeout, sandbox mode.
 
-### VH-051: Normalize OpenHands result
+### VH-052: OpenCode subprocess adapter wrapper
 
 Priority: P1
 
 PRD refs: FR-012
+
+Acceptance criteria:
+
+- Translates `adapter-task.yaml` into an OpenCode CLI invocation.
+- Passes repo path, task spec, model target (Qwen3-Coder via Ollama), and policy hints.
+- Captures git diff, changed file list, stdout, and test results into `RunResult`.
+
+### VH-053: OpenCode integration fixture
+
+Priority: P1
+
+PRD refs: FR-012
+
+Acceptance criteria:
+
+- Golden task run against a sample repo produces a complete run manifest and artifact directory.
+- Git diff is captured and stored in `.vibeharness/runs/<run_id>/`.
+
+## Epic E6b: OpenHands Adapter (Secondary Adapter)
+
+### VH-060: OpenHands REST adapter wrapper
+
+Priority: P1
+
+PRD refs: FR-012b
+
+Acceptance criteria:
+
+- Translates `adapter-task.yaml` → OpenHands REST API invocation.
+- Returns normalized `RunResult` with same shape as OpenCode adapter output.
+
+### VH-061: OpenHands result normalizer
+
+Priority: P1
+
+PRD refs: FR-012b
 
 Acceptance criteria:
 
 - Captures summary, changed files, diff reference, commands, tests, risks, follow-ups.
 
-### VH-052: Add OpenHands integration fixture
+### VH-062: OpenHands integration fixture
 
 Priority: P1
 
-PRD refs: FR-012
+PRD refs: FR-012b
 
 Acceptance criteria:
 
-- Sample repo run produces normalized artifacts.
+- Same sample task as VH-053 produces comparable `RunResult` via `--adapter openhands`.
+
 
 ## Epic E7: ECC-lite policy gates
 
-### VH-060: Policy classifier
+### VH-070: Policy classifier
 
-Priority: P0
+Priority: P0 ✅ COMPLETE
 
 PRD refs: FR-008
 
@@ -243,9 +296,9 @@ Acceptance criteria:
 
 - Classifies command/file/network/dependency/secret actions.
 
-### VH-061: Approval-required state
+### VH-071: Approval-required state
 
-Priority: P0
+Priority: P0 ✅ COMPLETE
 
 PRD refs: FR-008
 
@@ -254,9 +307,9 @@ Acceptance criteria:
 - A stage can pause and request human approval.
 - Approval-required policy decisions produce a deterministic run artifact and state transition before review/handoff work consumes them.
 
-### VH-062: Policy audit report
+### VH-072: Policy audit report
 
-Priority: P0
+Priority: P0 ✅ COMPLETE
 
 PRD refs: FR-008, FR-009, FR-010
 
@@ -266,9 +319,9 @@ Acceptance criteria:
 
 ## Epic E8: Review and handoff
 
-### VH-070: Review generator
+### VH-080: Review generator
 
-Priority: P0
+Priority: P0 ✅ COMPLETE
 
 PRD refs: FR-010
 
@@ -276,9 +329,9 @@ Acceptance criteria:
 
 - Checks implementation against requirements and acceptance criteria.
 
-### VH-071: Handoff generator
+### VH-081: Handoff generator
 
-Priority: P0
+Priority: P0 ✅ COMPLETE
 
 PRD refs: FR-010
 
@@ -286,19 +339,21 @@ Acceptance criteria:
 
 - Summarizes changes, tests, risks, follow-ups, memory proposals.
 
-### VH-072: PR description generator
+### VH-082: PR description generator
 
 Priority: P1
 
-PRD refs: FR-015
+PRD refs: FR-016
 
 Acceptance criteria:
 
 - Emits title/body/checklist suitable for PR creation.
 
-## Epic E9: Hermes proposals
+## Epic E9: Memory proposals (Mem0)
 
-### VH-080: Memory proposal format
+> Updated 2026-06-28: Mem0 replaces abstract "Hermes" contract as the concrete sidecar implementation.
+
+### VH-090: Mem0 self-hosted deployment guide
 
 Priority: P1
 
@@ -306,33 +361,54 @@ PRD refs: FR-013
 
 Acceptance criteria:
 
-- Emits proposal with evidence, target, scope, risk, status.
+- Developer can run Mem0 locally following the guide; VH connects to it successfully.
 
-### VH-081: Skill proposal format
+### VH-091: Context injector
 
 Priority: P1
 
-PRD refs: FR-014
+PRD refs: FR-013
+
+Acceptance criteria:
+
+- Relevant project-truth facts are queried from Mem0 and injected into task context at stage start.
+
+### VH-092: Memory proposal format (Mem0-referenced)
+
+Priority: P1
+
+PRD refs: FR-013b
+
+Acceptance criteria:
+
+- Emits proposal with evidence, target, scope, risk, status, and Mem0 memory ID reference.
+- Proposals appear in handoff and require explicit approval before committing.
+
+### VH-093: Skill proposal format
+
+Priority: P1
+
+PRD refs: FR-014b
 
 Acceptance criteria:
 
 - Emits draft skill proposal in quarantine-ready format.
 
-### VH-082: Hermes export prototype
+### VH-094: Hermes export prototype
 
 Priority: P2
 
-PRD refs: FR-015
+PRD refs: FR-016
 
 Acceptance criteria:
 
-- Exports run summary and proposal files for Hermes consumption.
+- Exports run summary and proposal files for downstream consumption.
 
-## Epic E10: Evaluation
+## Epic E10: Evaluation (Golden Fixtures)
 
-### VH-090: Golden fixtures
+### VH-100: Golden fixtures
 
-Priority: P0
+Priority: P0 ✅ COMPLETE
 
 PRD refs: FR-011
 
@@ -340,7 +416,7 @@ Acceptance criteria:
 
 - Includes passing, failing, and policy-violation workflows.
 
-### VH-091: Quality gate tests
+### VH-101: Quality gate tests
 
 Priority: P1
 
@@ -350,7 +426,7 @@ Acceptance criteria:
 
 - Planning, implementation, review, and handoff gates are testable.
 
-### VH-092: Regression harness
+### VH-102: Regression harness
 
 Priority: P1
 
@@ -359,3 +435,99 @@ PRD refs: FR-011
 Acceptance criteria:
 
 - Bugs can be reproduced as fixture workflows.
+
+## Epic E11: Quality Measurement Layer (NEW — 2026-06-28)
+
+> Addresses the critical quality measurement gap identified in ecosystem research.
+> Libraries: DeepEval (CI unit gates) + PromptFoo (red-teaming) + Langfuse (session tracing).
+
+### VH-110: PromptFoo CI integration
+
+Priority: P1
+
+PRD refs: FR-014
+
+Acceptance criteria:
+
+- PromptFoo config exists per VH workflow stage.
+- Golden-path acceptance suite passes in CI.
+- Policy adversarial suite catches policy-violating outputs before they reach execution.
+
+### VH-111: DeepEval post-stage quality assertions
+
+Priority: P1
+
+PRD refs: FR-014
+
+Acceptance criteria:
+
+- DeepEval hallucination score assertion runs after each stage completes.
+- CI build fails if hallucination score exceeds configured threshold.
+- Trace-based agent testing: individual tool calls within a stage are evaluated, not just final output.
+
+### VH-112: Langfuse session tracing
+
+Priority: P1
+
+PRD refs: FR-014
+
+Acceptance criteria:
+
+- Every VH run maps to a Langfuse session.
+- Every stage transition emits a span with: latency, cost estimate, model choice, policy decision.
+- A complete run can be reconstructed from trace data alone.
+
+### VH-113: Day 90 benchmark fixture
+
+Priority: P1
+
+PRD refs: FR-014
+
+Acceptance criteria:
+
+- Same canonical task runs through: (a) VH-governed OpenCode, (b) ungoverned OpenCode.
+- 5 DeepEval metrics captured for both runs.
+- VH-governed run scores measurably better on ≥ 3 of 5 metrics.
+- This fixture is the Phase 5 proof-of-concept gate.
+
+## Epic E12: Guardrails & ECC Operator Profile Enrichment (NEW — 2026-06-28)
+
+> Addresses TypeScript-native policy enforcement and operator context enrichment gaps.
+> Libraries: hai-guardrails (TypeScript-native) + ECC instinct file pattern (absorbed).
+
+### VH-120: hai-guardrails adapter boundary integration
+
+Priority: P1
+
+PRD refs: FR-015
+
+Acceptance criteria:
+
+- `@presidio-dev/hai-guardrails` wraps prompt-building calls at the adapter boundary.
+- Guards active: Injection, PII, Leakage, Toxicity, Bias.
+- Guard violations surface as `policy_decision: deny` in the VH run manifest.
+- Deterministic fixture: a prompt with a known injection pattern is caught and blocked.
+
+### VH-121: ECC instinct file pattern in operator profiles
+
+Priority: P1
+
+PRD refs: FR-015
+
+Acceptance criteria:
+
+- Operator profile schema extended with `instincts[]` array (pattern, confidence, source_run_id).
+- At stage start, instincts from the active operator profile are injected into task context.
+- A minimum of 3 example instincts are committed to the default operator profile.
+- New instincts discovered during a run are proposed (not auto-committed) in the handoff.
+
+### VH-122: MCP tool endpoint for VH policy gates (Watch list)
+
+Priority: P2
+
+PRD refs: FR-015
+
+Acceptance criteria:
+
+- VH policy gates are exposed as MCP-compatible tool endpoints.
+- Any MCP-compatible agent (OpenCode, Goose, Cline) can call VH policy checks natively.

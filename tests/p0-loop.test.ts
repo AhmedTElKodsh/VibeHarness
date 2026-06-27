@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import { existsSync, mkdtempSync, rmSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { writeValidationFixtures } from "../src/fixtures";
@@ -49,10 +49,18 @@ describe("P0 CLI loop", () => {
     expect(existsSync(join(root, "docs", "risk-register.md"))).toBe(true);
     expect(existsSync(join(root, "docs", "unresolved-questions.md"))).toBe(true);
 
+    expect(await runCli(root, ["compile", "--workflow", "default-feature", "--target", "archon"])).toMatchObject({
+      exitCode: 0
+    });
+    expect(existsSync(join(root, ".vibeharness", "compiled", "archon", "default-feature.yaml"))).toBe(true);
+
     expect(await runCli(root, ["run", "--workflow", "default-feature", "--adapter", "mock"])).toMatchObject({
       exitCode: 0
     });
     expect(existsSync(join(root, ".vibeharness", "runs", "latest", "run-manifest.json"))).toBe(true);
+    expect(await runCli(root, ["validate", join(root, ".vibeharness", "runs", "latest", "adapter-task.yaml")])).toMatchObject({
+      exitCode: 0
+    });
     expect(await runCli(root, ["validate", join(root, ".vibeharness", "runs", "latest", "run-manifest.json")])).toMatchObject({
       exitCode: 0
     });
@@ -61,6 +69,15 @@ describe("P0 CLI loop", () => {
     expect(existsSync(join(root, ".vibeharness", "runs", "latest", "review.md"))).toBe(true);
     expect(existsSync(join(root, ".vibeharness", "runs", "latest", "handoff.md"))).toBe(true);
     expect(existsSync(join(root, ".vibeharness", "runs", "latest", "policy-audit.md"))).toBe(true);
+    expect(await runCli(root, ["validate", join(root, ".vibeharness", "runs", "latest", "review.md")])).toMatchObject({
+      exitCode: 0
+    });
+    expect(await runCli(root, ["validate", join(root, ".vibeharness", "runs", "latest", "handoff.md")])).toMatchObject({
+      exitCode: 0
+    });
+    expect(await runCli(root, ["validate", join(root, ".vibeharness", "runs", "latest", "policy-audit.md")])).toMatchObject({
+      exitCode: 0
+    });
   });
 
   test("rejects invalid project fixture and records approval-required policy fixture", async () => {
@@ -76,5 +93,111 @@ describe("P0 CLI loop", () => {
       exitCode: 0
     });
     expect(existsSync(join(fixtureRoot, ".vibeharness", "runs", "latest", "approval-request.json"))).toBe(true);
+    expect(
+      await runCli(fixtureRoot, ["validate", join(fixtureRoot, ".vibeharness", "runs", "latest", "approval-request.json")])
+    ).toMatchObject({
+      exitCode: 0
+    });
+    expect(
+      await runCli(fixtureRoot, [
+        "validate",
+        join(fixtureRoot, ".vibeharness", "runs", "latest", "policy-decisions", "destructive-command.json")
+      ])
+    ).toMatchObject({
+      exitCode: 0
+    });
+    const approvalRequest = JSON.parse(
+      readFileSync(join(fixtureRoot, ".vibeharness", "runs", "latest", "approval-request.json"), "utf8")
+    ) as Record<string, unknown>;
+    expect(approvalRequest).toMatchObject({
+      decisionId: "destructive-command",
+      stageId: "destructive-command",
+      actionType: "command",
+      resource: "rm -rf build",
+      policyRuleId: "commands.destructive",
+      requestedApprovalActor: "human"
+    });
+
+    expect(
+      await runCli(fixtureRoot, [
+        "approve",
+        "--run",
+        "latest",
+        "--decision",
+        "destructive-command",
+        "--outcome",
+        "rejected",
+        "--actor",
+        "tester",
+        "--reason",
+        "fixture rejection"
+      ])
+    ).toMatchObject({
+      exitCode: 0
+    });
+    expect(
+      await runCli(fixtureRoot, ["validate", join(fixtureRoot, ".vibeharness", "runs", "latest", "approval-outcome.json")])
+    ).toMatchObject({
+      exitCode: 0
+    });
+    const updatedManifest = JSON.parse(
+      readFileSync(join(fixtureRoot, ".vibeharness", "runs", "latest", "run-manifest.json"), "utf8")
+    ) as Record<string, unknown>;
+    expect(updatedManifest.status).toBe("failed");
+
+    expect(await runCli(fixtureRoot, ["review", "--run", "latest"])).toMatchObject({ exitCode: 0 });
+    for (const artifact of ["review.md", "handoff.md", "policy-audit.md"]) {
+      const content = readFileSync(join(fixtureRoot, ".vibeharness", "runs", "latest", artifact), "utf8");
+      expect(content).toContain("## Approval Status");
+      expect(content).toContain("destructive-command: rejected by tester - fixture rejection");
+    }
+  });
+
+  test("records deny, quarantine, and warn policy fixture decisions", async () => {
+    const root = makeTempRoot();
+    writeValidationFixtures(root);
+
+    const cases = [
+      {
+        fixture: "vibeharness-policy-denied",
+        workflow: "policy-denied",
+        decisionFile: "secret-read.json",
+        decision: "deny",
+        exitCode: 1,
+        status: "failed"
+      },
+      {
+        fixture: "vibeharness-policy-quarantined",
+        workflow: "policy-quarantined",
+        decisionFile: "memory-update.json",
+        decision: "quarantine",
+        exitCode: 0,
+        status: "passed"
+      },
+      {
+        fixture: "vibeharness-policy-warn",
+        workflow: "policy-warn",
+        decisionFile: "noncritical-warning.json",
+        decision: "warn",
+        exitCode: 0,
+        status: "passed"
+      }
+    ];
+
+    for (const policyCase of cases) {
+      const fixtureRoot = join(root, "fixtures", policyCase.fixture);
+      expect(await runCli(fixtureRoot, ["validate", fixtureRoot])).toMatchObject({ exitCode: 0 });
+      expect(await runCli(fixtureRoot, ["run", "--workflow", policyCase.workflow, "--adapter", "mock"])).toMatchObject({
+        exitCode: policyCase.exitCode
+      });
+      const decisionPath = join(fixtureRoot, ".vibeharness", "runs", "latest", "policy-decisions", policyCase.decisionFile);
+      expect(await runCli(fixtureRoot, ["validate", decisionPath])).toMatchObject({ exitCode: 0 });
+      const decision = JSON.parse(readFileSync(decisionPath, "utf8")) as Record<string, unknown>;
+      expect(decision.decision).toBe(policyCase.decision);
+      const manifest = JSON.parse(
+        readFileSync(join(fixtureRoot, ".vibeharness", "runs", "latest", "run-manifest.json"), "utf8")
+      ) as Record<string, unknown>;
+      expect(manifest.status).toBe(policyCase.status);
+    }
   });
 });

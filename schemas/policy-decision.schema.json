@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/policy-decision.schema.json",
+  "title": "VibeHarness Policy Decision",
+  "type": "object",
+  "required": [
+    "id",
+    "runId",
+    "stageId",
+    "actionType",
+    "resource",
+    "decision",
+    "reason",
+    "policyRuleId",
+    "timestamp",
+    "artifactReferences"
+  ],
+  "properties": {
+    "id": { "type": "string", "minLength": 1 },
+    "runId": { "type": "string", "minLength": 1 },
+    "stageId": { "type": "string", "minLength": 1 },
+    "actionType": {
+      "enum": ["command", "file", "network", "dependency", "secret", "skill", "memory", "adapter"]
+    },
+    "resource": { "type": "string", "minLength": 1 },
+    "decision": {
+      "enum": ["allow", "warn", "approval_required", "deny", "quarantine"]
+    },
+    "reason": { "type": "string", "minLength": 1 },
+    "policyRuleId": { "type": "string", "minLength": 1 },
+    "requestedApprovalActor": { "type": "string", "minLength": 1 },
+    "timestamp": { "type": "string", "minLength": 1 },
+    "artifactReferences": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "command": { "type": "string", "minLength": 1 }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": { "decision": { "const": "approval_required" } },
+        "required": ["decision"]
+      },
+      "then": {
+        "required": ["requestedApprovalActor"]
+      }
+    }
+  ],
+  "additionalProperties": false
+}

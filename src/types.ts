@@ -29,6 +29,7 @@ export type WorkflowStage = {
   name: string;
   required: boolean;
   adapter?: string;
+  operatorProfile?: string;
   outputs: string[];
 };
 
@@ -68,9 +69,86 @@ export type RunStatus = "passed" | "failed" | "approval_required";
 
 export type PolicyDecision = {
   id: string;
+  runId: string;
+  stageId: string;
+  actionType: "command" | "file" | "network" | "dependency" | "secret" | "skill" | "memory" | "adapter";
+  resource: string;
   decision: "allow" | "warn" | "approval_required" | "deny" | "quarantine";
   reason: string;
+  policyRuleId: string;
+  requestedApprovalActor?: string;
+  timestamp: string;
+  artifactReferences: string[];
   command?: string;
+};
+
+export type OperatorProfileConfig = {
+  schemaVersion: "v1alpha1";
+  name: string;
+  skills: {
+    approved: string[];
+  };
+  hooks: {
+    pre_stage: string[];
+    post_stage: string[];
+  };
+  memory: {
+    mode: "proposal_only" | "disabled";
+  };
+};
+
+export type AdapterTask = {
+  schemaVersion: "v1alpha1";
+  runId: string;
+  workflow: string;
+  adapter: string;
+  task: string;
+  stageId: string;
+  operatorProfile: string;
+  policyHints: string[];
+  expectedArtifacts: string[];
+};
+
+export type ApprovalRequest = {
+  runId: string;
+  decisionId: string;
+  stageId: string;
+  actionType: PolicyDecision["actionType"];
+  resource: string;
+  reason: string;
+  policyRuleId: string;
+  requestedApprovalActor: string;
+  command?: string;
+};
+
+export type ApprovalOutcome = {
+  schemaVersion: "v1alpha1";
+  runId: string;
+  decisionId: string;
+  outcome: "approved" | "rejected";
+  actor: string;
+  reason: string;
+  recordedAt: string;
+};
+
+export type CompiledArchonWorkflow = {
+  schemaVersion: "v1alpha1";
+  target: "archon";
+  workflow: string;
+  nodes: {
+    id: string;
+    name: string;
+    required: boolean;
+    adapter: string;
+    ecc_profile: {
+      name: string;
+      memory_mode: "proposal_only" | "disabled";
+      approved_skills: string[];
+      pre_stage_hooks: string[];
+      post_stage_hooks: string[];
+    };
+    outputs: string[];
+  }[];
 };
 
 export type RunManifest = {

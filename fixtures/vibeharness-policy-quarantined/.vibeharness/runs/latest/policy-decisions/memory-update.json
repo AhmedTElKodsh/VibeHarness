@@ -1,0 +1,14 @@
+{
+  "id": "memory-update",
+  "runId": "20260614194407",
+  "stageId": "memory-update",
+  "actionType": "memory",
+  "resource": "project-context.md",
+  "decision": "quarantine",
+  "reason": "Memory updates are proposal-only in the MVP policy.",
+  "policyRuleId": "memory.proposal_only",
+  "timestamp": "2026-06-14T19:44:07.144Z",
+  "artifactReferences": [
+    ".vibeharness/runs/<run_id>/policy-decisions/memory-update.json"
+  ]
+}

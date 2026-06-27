@@ -1,0 +1,11 @@
+schemaVersion: v1alpha1
+runId: "20260614194407"
+workflow: policy-quarantined
+adapter: mock
+task: Execute deterministic mock fixture for policy-quarantined
+stageId: memory-update
+operatorProfile: ecc-review
+policyHints:
+  - memory.proposal_only=quarantine
+expectedArtifacts:
+  - .vibeharness/runs/latest/policy-decisions/memory-update.json

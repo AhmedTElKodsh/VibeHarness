@@ -14,13 +14,16 @@ Prove a local, deterministic workflow harness that can turn an idea file into pl
 - `vibeharness init` writes the canonical `.vibeharness/` starter files without overwriting existing files unless `--force` is used.
 - `vibeharness validate` accepts valid project fixtures and reports file/path-specific errors for invalid fixtures.
 - `vibeharness plan --idea <path>` writes PRD, architecture, task, risk, and unresolved-question docs.
+- `vibeharness compile --workflow <name> --target archon` writes a local Archon-compatible contract artifact.
 - `vibeharness run --workflow default-feature --adapter mock` writes a valid run manifest and deterministic run artifacts.
 - A policy-blocked mock workflow records an approval-required or denied policy decision.
+- `vibeharness approve --run <run_id> ...` records a local approval or rejection without executing blocked actions.
 - `vibeharness review --run latest` writes review, handoff, and policy-audit artifacts.
 
 ## Deferred
 
-- Real OpenHands execution.
+- Real OpenCode execution.
+- OpenHands execution as a secondary adapter after OpenCode proves the adapter seam.
 - Export commands.
 - Hosted UI.
 - Automatic memory or skill promotion.

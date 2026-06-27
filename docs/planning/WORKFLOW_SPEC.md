@@ -143,7 +143,7 @@ Each P0 task must have acceptance criteria.
 
 ### Goal
 
-Create bounded agent tasks for the mock adapter in MVP and for real coding adapters such as OpenHands after the contract is stable.
+Create bounded agent tasks for the mock adapter in MVP and for real coding adapters such as OpenCode after the contract is stable.
 
 ### Outputs
 
@@ -296,11 +296,12 @@ No memory or skill proposal is committed automatically in MVP.
 `ARCHITECTURE.md` owns the canonical run, stage, and policy decision states. This section shows the default stage flow only.
 
 ```text
-pending -> ready -> running -> passed
-                    |       
-                    +-----> failed
-                    +-----> waiting_for_approval
-                    +-----> blocked
+pending -> running -> passed
+              |
+              +-----> failed
+              +-----> approval_required
+              +-----> blocked
+              +-----> skipped
 ```
 
 ## Default required artifacts
@@ -315,4 +316,9 @@ pending -> ready -> running -> passed
 - `test-results.md`
 - `review.md`
 - `handoff.md`
+
+## Deferred optional artifacts
+
 - `memory-proposals/*.md`
+- `skill-proposals/*.md`
+- `exports/*.md`

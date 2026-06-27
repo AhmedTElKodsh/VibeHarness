@@ -22,6 +22,7 @@ As a developer, I want to initialize a project, describe a feature, generate a h
 
 - Validate project config.
 - Validate workflow profiles.
+- Validate ECC operator profiles.
 - Validate adapter contracts.
 - Validate policy config.
 - Emit actionable errors with file path and field path.
@@ -50,6 +51,7 @@ As a developer, I want to initialize a project, describe a feature, generate a h
 
 - Package bounded coding tasks through the same adapter contract future coding agents will use.
 - Return deterministic fixture outputs for passing, failing, and policy-blocked runs.
+- Emit a deterministic Archon-compatible compile artifact with node-scoped ECC operator profiles.
 - Capture changed-file references, command outputs, tests, and summary from fixtures.
 - Normalize outputs into VibeHarness artifacts.
 
@@ -74,10 +76,11 @@ MVP policy gates:
 
 ## MVP+1 integrations
 
-- OpenHands adapter that consumes the stable `adapter-task.yaml` contract.
-- Hermes sidecar export beyond proposal files.
+- OpenCode adapter that consumes the stable `adapter-task.yaml` contract.
+- OpenHands adapter as a secondary backend after OpenCode proves the adapter seam.
+- Mem0 sidecar export beyond proposal files.
 - PR creation/export automation.
-- First non-OpenHands adapter proof.
+- First non-OpenCode adapter proof.
 
 ## Excluded from MVP
 
@@ -88,7 +91,7 @@ MVP policy gates:
 - Automatic PR merge.
 - Multi-agent autonomous project management without human approval.
 - Full adapter parity across all coding tools.
-- Automatic Hermes memory writes.
+- Automatic Mem0/Hermes memory writes.
 - Automatic skill promotion.
 
 ## MVP acceptance test
@@ -124,7 +127,7 @@ Then VibeHarness should produce:
 | AC-MVP-002 | `vibeharness validate` accepts the minimal valid fixture and rejects invalid project, workflow, adapter, and policy fixtures with file and field paths. |
 | AC-MVP-003 | `vibeharness plan --idea docs/example-idea.md` emits PRD, architecture, `tasks.md`, `risk-register.md`, and unresolved-question artifacts with no schema errors. |
 | AC-MVP-004 | `vibeharness run --workflow default-feature --adapter mock` writes `.vibeharness/runs/<run_id>/run-manifest.json` and required stage artifacts. |
-| AC-MVP-005 | A policy-blocked fixture returns `approval_required` or `deny` and records the policy decision. |
+| AC-MVP-005 | Policy fixtures return and record `allow`, `warn`, `approval_required`, `deny`, and `quarantine` decisions. |
 | AC-MVP-006 | `vibeharness review --run latest` produces `review.md` and `handoff.md` that cite changed artifacts, tests, risks, and next actions. |
 
 ## MVP quality bar
@@ -135,4 +138,4 @@ Then VibeHarness should produce:
 - No destructive command execution without approval.
 - No adapter-specific fields in core schema unless namespaced.
 - Every generated artifact has a clear owner and lifecycle.
-- Implement and test P0 first: `AC-MVP-001` through `AC-MVP-006` must pass on the mock-adapter path before OpenHands, export, Hermes sidecar, adapter expansion, hosted UI, or automatic memory/skill promotion work begins.
+- Implement and test P0 first: `AC-MVP-001` through `AC-MVP-006` must pass on the mock-adapter path before OpenCode, OpenHands, export, Mem0/Hermes sidecars, adapter expansion, hosted UI, or automatic memory/skill promotion work begins.

@@ -1,10 +1,12 @@
 # Source
 
-TypeScript source for the VibeHarness CLI and P0 engine.
+TypeScript source for the VibeHarness CLI and local-first engine.
 
 ## Modules
 
-- `cli.ts`: command dispatch for `init`, `validate`, `fixtures`, `plan`, `run`, and `review`.
+- `cli.ts`: command dispatch for `init`, `validate`, `fixtures`, `plan`, `compile`, `run`, `approve`, and `review`.
+- `approval.ts`: records local approval or rejection outcomes for approval-required runs.
+- `compile.ts`: writes local Archon-compatible workflow YAML with attached ECC operator profiles.
 - `fixtures.ts`: writes starter projects and validation fixtures.
 - `templates.ts`: canonical YAML and example idea templates.
 - `validation.ts`: config parsing and contract validation.

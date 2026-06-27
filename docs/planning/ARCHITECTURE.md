@@ -27,13 +27,17 @@ VibeHarness Core
   |
   +--> Mock Adapter -> deterministic fixture execution
   |
-  +--> OpenHands Adapter -> OpenHands Control Plane -> Sandbox -> Repo/Test/PR artifacts
+  +--> OpenCode Adapter -> CLI subprocess -> Repo/Test/PR artifacts
+  |
+  +--> OpenHands Adapter -> secondary REST backend after OpenCode proves the seam
   |
   +--> VibeHarness Deterministic Runner -> staged execution
   |
   +--> ECC Policy Layer -> security gates, approvals, hooks, skills policy
   |
-  +--> Hermes Sidecar -> memory proposals, skills incubation, cron, messaging, Kanban
+  +--> Mem0 Sidecar -> semantic project-truth memory proposals
+  |
+  +--> Hermes Export -> deferred memory/coordination interchange
 ```
 
 ## Core components
@@ -99,6 +103,10 @@ MVP adapter:
 
 - Mock adapter.
 
+First real adapter:
+
+- OpenCode.
+
 Future adapters:
 
 - OpenHands;
@@ -120,7 +128,7 @@ MVP implementation:
 
 First real coding implementation:
 
-- OpenHands.
+- OpenCode.
 
 Request contract:
 
@@ -145,9 +153,9 @@ Response contract:
 - unresolved risks;
 - logs and raw output references.
 
-### 6. OpenHands adapter
+### 6. OpenCode adapter
 
-Primary coding execution path.
+Primary first real coding execution path after the mock adapter proves the contract.
 
 Inputs:
 
@@ -171,7 +179,13 @@ Outputs:
 - unresolved risks;
 - logs and raw output.
 
-OpenHands is not required to prove the MVP kernel. It consumes the stable adapter contract after the mock adapter proves run determinism and artifact validation.
+OpenCode is invoked as a CLI subprocess from the Bun runner. It is not required to prove the MVP kernel; it consumes the stable adapter contract after the mock adapter proves run determinism and artifact validation.
+
+### 6b. OpenHands adapter
+
+Secondary coding execution path.
+
+OpenHands consumes the same adapter task and normalized result contract after OpenCode proves the first real backend seam. It should not introduce core schema fields that only make sense for OpenHands.
 
 ### 7. VibeHarness deterministic runner
 
@@ -185,7 +199,7 @@ Provides deterministic workflow behavior:
 - stop/resume behavior after the P0 contract is stable;
 - parallelizable future stages.
 
-The MVP implements deterministic workflow semantics locally and can later compile to external workflow runtimes if desired.
+The current local compiler emits an Archon-compatible YAML artifact under `.vibeharness/compiled/archon/<workflow>.yaml`. This is a deterministic contract artifact, not a live remote Archon execution integration.
 
 ### 8. ECC policy layer
 
@@ -203,20 +217,24 @@ Owns:
 
 ECC should be invoked before a stage runs, during sensitive actions where possible, and after a stage completes.
 
-### 9. Hermes sidecar
+### 9. Mem0 sidecar and Hermes export
 
-Owns outer-loop intelligence:
+Mem0 owns semantic project-truth memory for the first sidecar integration:
 
 - project/user preference memory;
-- memory proposals;
-- self-improving skill drafts;
-- skill review pipeline;
+- project convention memory;
+- run-learned facts;
+- context injection at stage start;
+- proposal references for new memories.
+
+Hermes is a deferred export/interchange target for broader outer-loop intelligence:
+
 - messaging notifications;
 - scheduled tasks;
 - Kanban coordination;
 - long-running goals.
 
-Hermes must not be the source of committed project truth. It proposes updates; VibeHarness/ECC/humans approve them.
+Neither Mem0 nor Hermes may be the source of committed project truth. They propose updates; VibeHarness/ECC/humans approve them.
 
 ## Data flow: feature run
 
@@ -227,10 +245,10 @@ Hermes must not be the source of committed project truth. It proposes updates; V
 4. Workflow runner starts deterministic stages.
 5. ECC checks stage permissions.
 6. Adapter packages implementation task.
-7. Mock adapter executes deterministic fixture for MVP; OpenHands executes in sandbox after MVP+1.
+7. Mock adapter executes deterministic fixture for MVP; OpenCode executes through the CLI subprocess adapter after the contract is stable.
 8. VibeHarness runs tests/review gates.
 9. Handoff is generated.
-10. Hermes receives optional memory/skill proposals and coordination summary.
+10. Mem0 receives optional memory proposal references after the proposal contract exists; Hermes export remains deferred.
 ```
 
 ## Artifact model
@@ -245,12 +263,13 @@ Each run creates:
   policy-decisions/
   tests/
   approval-request.json
+  approval-outcome.json
   review.md
   handoff.md
   policy-audit.md
 ```
 
-`approval-request.json` is present only when a policy decision requires approval. Memory and skill proposal directories are deferred until the proposal contract is implemented.
+`approval-request.json` is present only when a policy decision requires approval. `approval-outcome.json` is present only after a human records approval or rejection. Memory and skill proposal directories are deferred until the proposal contract is implemented.
 
 ## State model
 
@@ -329,10 +348,14 @@ The canonical contract set is:
 | Project config | `.vibeharness/project.yaml` | schema validation fixture |
 | Policy config | `.vibeharness/policy.yaml` | schema validation and policy simulation fixture |
 | Workflow profile | `.vibeharness/workflows/default-feature.yaml` | workflow schema fixture |
+| ECC operator profile | `.vibeharness/profiles/*.yaml` | operator profile schema fixture |
+| Archon compile artifact | `.vibeharness/compiled/archon/<workflow>.yaml` | compiled Archon schema fixture with node-scoped ECC profiles |
 | Adapter config | `.vibeharness/adapters/mock.yaml` | adapter schema fixture |
 | Adapter task | `.vibeharness/runs/<run_id>/adapter-task.yaml` | generated task contract check |
 | Run manifest | `.vibeharness/runs/<run_id>/run-manifest.json` | manifest schema check |
 | Policy decision | `.vibeharness/runs/<run_id>/policy-decisions/*.json` | policy decision schema check |
+| Approval request | `.vibeharness/runs/<run_id>/approval-request.json` | approval request schema check |
+| Approval outcome | `.vibeharness/runs/<run_id>/approval-outcome.json` | approval outcome schema check |
 | Review | `.vibeharness/runs/<run_id>/review.md` | required-section check |
 | Handoff | `.vibeharness/runs/<run_id>/handoff.md` | required-section check |
 
@@ -353,22 +376,25 @@ Minimum P0 contract checks:
 | `.vibeharness/project.yaml` | project schema fixture |
 | `.vibeharness/policy.yaml` | policy schema fixture plus policy simulation fixture |
 | `.vibeharness/workflows/default-feature.yaml` | workflow schema fixture |
+| `.vibeharness/profiles/*.yaml` | operator profile schema fixture |
+| `.vibeharness/compiled/archon/<workflow>.yaml` | compiled Archon schema fixture with node-scoped ECC profiles |
 | `.vibeharness/adapters/mock.yaml` | adapter schema fixture |
 | `.vibeharness/runs/<run_id>/adapter-task.yaml` | adapter-task contract fixture |
 | `.vibeharness/runs/<run_id>/run-manifest.json` | run-manifest schema fixture |
 | `.vibeharness/runs/<run_id>/policy-decisions/*.json` | policy decision schema fixture |
 | `.vibeharness/runs/<run_id>/approval-request.json` | approval-required fixture |
+| `.vibeharness/runs/<run_id>/approval-outcome.json` | approval outcome fixture |
 | `.vibeharness/runs/<run_id>/review.md` | required-section fixture |
 | `.vibeharness/runs/<run_id>/handoff.md` | required-section fixture |
 
-The mock adapter is allowed to prove only this stable contract. It must not be treated as evidence that OpenHands or any other real coding backend is ready.
+The mock adapter is allowed to prove only this stable contract. It must not be treated as evidence that OpenCode, OpenHands, or any other real coding backend is ready.
 
 ## Architectural risks
 
 - Adapter contracts may become too generic to be useful.
 - Workflow determinism may be weakened by free-form agent behavior.
 - Policy enforcement may be uneven across backends.
-- Hermes memory could drift from committed project truth if review gates are skipped.
+- Mem0/Hermes memory could drift from committed project truth if review gates are skipped.
 - Generated artifacts may become noisy unless quality gates are strict.
 
 ## Architecture quality bar

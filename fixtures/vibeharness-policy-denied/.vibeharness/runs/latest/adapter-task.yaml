@@ -1,0 +1,11 @@
+schemaVersion: v1alpha1
+runId: "20260614194407"
+workflow: policy-denied
+adapter: mock
+task: Execute deterministic mock fixture for policy-denied
+stageId: secret-read
+operatorProfile: ecc-implementation
+policyHints:
+  - secrets.default=deny
+expectedArtifacts:
+  - .vibeharness/runs/latest/policy-decisions/secret-read.json

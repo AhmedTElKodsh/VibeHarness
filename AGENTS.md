@@ -15,17 +15,21 @@ bun src/cli.ts init [--fixture <path>] [--force]
 bun src/cli.ts validate <path>
 bun src/cli.ts fixtures
 bun src/cli.ts plan --idea <path>
+bun src/cli.ts compile --workflow <name> --target archon
 bun src/cli.ts run --workflow <name> --adapter <name>
+bun src/cli.ts approve --run <latest|run_id> --decision <id> --outcome <approved|rejected> --actor <name> [--reason <text>]
 bun src/cli.ts review --run <latest|run_id>
 ```
 
 Implemented runtime path:
 
-1. `init` writes `.vibeharness/project.yaml`, `.vibeharness/policy.yaml`, `.vibeharness/workflows/default-feature.yaml`, `.vibeharness/adapters/mock.yaml`, `.vibeharness/adapters/openhands.yaml.example`, and `docs/example-idea.md`.
-2. `validate` checks project, workflow, adapter, policy, and run-manifest contracts.
+1. `init` writes `.vibeharness/project.yaml`, `.vibeharness/policy.yaml`, `.vibeharness/workflows/default-feature.yaml`, `.vibeharness/profiles/ecc-*.yaml`, `.vibeharness/adapters/mock.yaml`, `.vibeharness/adapters/openhands.yaml.example`, and `docs/example-idea.md`.
+2. `validate` checks project, workflow, adapter, policy, operator profile, compiled Archon workflow, adapter-task, approval-request, approval-outcome, policy-decision, run-manifest, review, handoff, and policy-audit contracts.
 3. `plan` converts an idea markdown file into `docs/prd.md`, `docs/architecture.md`, `docs/tasks.md`, `docs/risk-register.md`, and `docs/unresolved-questions.md`.
-4. `run` executes the P0 mock-adapter path and writes `.vibeharness/runs/<run_id>/` plus a mirrored `.vibeharness/runs/latest/`.
-5. `review` writes `review.md`, `handoff.md`, and `policy-audit.md` for a run.
+4. `compile` writes `.vibeharness/compiled/archon/<workflow>.yaml` with workflow nodes and attached ECC operator profiles.
+5. `run` executes the P0 mock-adapter path and writes `.vibeharness/runs/<run_id>/` plus a mirrored `.vibeharness/runs/latest/`.
+6. `approve` records an approval or rejection for an approval-required run and updates the local run manifest state without executing blocked actions.
+7. `review` writes `review.md`, `handoff.md`, and `policy-audit.md` for a run.
 
 ## Core Principles
 
@@ -65,6 +69,7 @@ Important source modules:
 - `src/fixtures.ts`: starter project and validation fixture generation.
 - `src/templates.ts`: canonical starter YAML and example idea templates.
 - `src/validation.ts`: YAML/JSON parsing and validation checks.
+- `src/compile.ts`: local Archon-compatible workflow compile artifacts.
 - `src/plan.ts`: generated planning artifacts.
 - `src/run.ts`: deterministic mock-adapter run execution.
 - `src/review.ts`: review, handoff, and policy audit generation.
@@ -94,6 +99,7 @@ bun src/cli.ts validate fixtures/vibeharness-starter
 
 # Run the P0 workflow loop in a VibeHarness project.
 bun src/cli.ts plan --idea docs/example-idea.md
+bun src/cli.ts compile --workflow default-feature --target archon
 bun src/cli.ts run --workflow default-feature --adapter mock
 bun src/cli.ts review --run latest
 ```

@@ -19,7 +19,7 @@ bun src/cli.ts run --workflow default-feature --adapter mock
 bun src/cli.ts review --run latest
 ```
 
-Implemented commands are `init`, `validate`, `fixtures`, `plan`, `run`, and `review`. Mentions of `explain`, `export`, real OpenHands execution, hosted UI, Hermes, or automatic memory/skill promotion are roadmap items unless source code and tests say otherwise.
+Implemented commands are `init`, `validate`, `fixtures`, `plan`, `compile`, `run`, `approve`, and `review`. Mentions of `explain`, `export`, real OpenCode/OpenHands execution, hosted UI, Mem0/Hermes sidecars, or automatic memory/skill promotion are roadmap items unless source code and tests say otherwise.
 
 ## Source-of-Truth Order
 
@@ -56,8 +56,10 @@ When planning documents conflict, use this order:
 | Latest run mirror | `.vibeharness/runs/latest/` |
 | Risk file | `risk-register.md` |
 | MVP execution adapter | `mock` |
-| First real backend adapter | `OpenHands` |
-| Long-term memory sidecar | `Hermes` |
+| First real backend adapter | `OpenCode` |
+| Secondary backend adapter | `OpenHands` |
+| Long-term memory sidecar | `Mem0` |
+| Memory/export interchange | `Hermes` |
 | Policy/operator layer | `ECC-lite` for MVP |
 
 ## Traceability Rule
@@ -75,4 +77,4 @@ If a task is not in all four places, treat it as planning-only until the gap is 
 
 P0 stays centered on the mock-adapter loop until `AC-MVP-001` through `AC-MVP-006` pass through `bun run validate`.
 
-P1/P2 tasks may remain in the backlog and `tasks.yaml`, but they must stay blocked until the P0 acceptance set is passing and the docs clearly mark the new scope as implemented.
+Phase 5 starts with foundation hardening and the OpenCode adapter after the P0 acceptance set is passing. OpenHands, Mem0/Hermes, quality tooling, guardrails, exports, hosted UI, and automatic memory/skill promotion remain deferred until their `TRACEABILITY.md` rows and `tasks.yaml` entries name validation paths.

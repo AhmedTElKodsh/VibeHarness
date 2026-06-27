@@ -1,0 +1,10 @@
+schemaVersion: v1alpha1
+name: policy-warn
+stages:
+  - id: noncritical-warning
+    name: Noncritical warning check
+    required: true
+    adapter: mock
+    operatorProfile: ecc-implementation
+    outputs:
+      - .vibeharness/runs/latest/policy-decisions/noncritical-warning.json

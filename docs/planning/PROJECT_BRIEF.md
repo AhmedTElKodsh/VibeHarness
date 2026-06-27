@@ -26,10 +26,12 @@ The winning architecture is not one all-powerful agent. It is a governed harness
 ```text
 VibeHarness = schemas, workflows, adapters, artifact contracts, policy decisions
 Mock adapter = MVP execution proof for deterministic contracts
-OpenHands   = first real coding-agent control-plane integration after the kernel works
+OpenCode    = first real coding-agent adapter after the kernel works
+OpenHands   = secondary adapter after OpenCode proves the seam
 VibeHarness runner = deterministic workflow semantics and optional compatible runtime
 ECC         = security, operator policy, hooks, approvals, skills governance
-Hermes      = adaptive memory, skills incubation, messaging, cron, Kanban
+Mem0        = semantic project-truth memory sidecar
+Hermes      = later export/interchange target for memory, skills, and coordination
 ```
 
 ## Primary users
@@ -42,13 +44,13 @@ Hermes      = adaptive memory, skills incubation, messaging, cron, Kanban
 
 ## MVP outcome
 
-A developer can initialize a VibeHarness project, describe an idea, generate a validated PRD/plan/tasks packet, run a deterministic workflow through the mock adapter, collect policy/test/review evidence, and produce a final handoff with optional memory or skill proposals. OpenHands becomes the first real coding adapter after this contract-proving loop is stable.
+A developer can initialize a VibeHarness project, describe an idea, generate a validated PRD/plan/tasks packet, run a deterministic workflow through the mock adapter, collect policy/test/review evidence, and produce a final handoff with optional memory or skill proposals. OpenCode becomes the first real coding adapter after this contract-proving loop is stable.
 
 ## Non-goals for MVP
 
 - Building a full IDE.
-- Replacing OpenHands as the coding platform.
-- Letting Hermes directly mutate project truth without review.
+- Building a dedicated coding platform instead of adapting existing coding agents.
+- Letting Mem0, Hermes, or hidden assistant memory directly mutate project truth without review.
 - Supporting every coding agent adapter at launch.
 - Building a multi-tenant SaaS control plane before the local-first developer workflow works.
 - Auto-merging PRs without human approval.

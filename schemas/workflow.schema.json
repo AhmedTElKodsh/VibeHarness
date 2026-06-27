@@ -18,6 +18,7 @@
           "name": { "type": "string", "minLength": 1 },
           "required": { "type": "boolean" },
           "adapter": { "type": "string", "minLength": 1 },
+          "operatorProfile": { "type": "string", "minLength": 1 },
           "outputs": {
             "type": "array",
             "items": { "type": "string", "minLength": 1 }

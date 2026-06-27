@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vibeharness.local/schemas/operator-profile.schema.json",
+  "title": "VibeHarness ECC Operator Profile",
+  "type": "object",
+  "required": ["schemaVersion", "name", "skills", "hooks", "memory"],
+  "properties": {
+    "schemaVersion": { "const": "v1alpha1" },
+    "name": { "type": "string", "minLength": 1 },
+    "skills": {
+      "type": "object",
+      "required": ["approved"],
+      "properties": {
+        "approved": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "hooks": {
+      "type": "object",
+      "required": ["pre_stage", "post_stage"],
+      "properties": {
+        "pre_stage": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "post_stage": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "memory": {
+      "type": "object",
+      "required": ["mode"],
+      "properties": {
+        "mode": { "enum": ["proposal_only", "disabled"] }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
