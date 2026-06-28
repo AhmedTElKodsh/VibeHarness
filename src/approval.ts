@@ -1,10 +1,22 @@
+import { cpSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { writeJson } from "./json";
 import { loadApprovalRequest, loadRunManifest } from "./validation";
 import type { ApprovalOutcome, RunManifest, RunStatus, StageStatus } from "./types";
 
 function resolveRunRoot(root: string, runRef: string): string {
+  if (runRef === "latest") {
+    const latestRoot = join(root, ".vibeharness", "runs", "latest");
+    const manifest = loadRunManifest(join(latestRoot, "run-manifest.json"));
+    return join(root, ".vibeharness", "runs", manifest.runId);
+  }
   return join(root, ".vibeharness", "runs", runRef);
+}
+
+function mirrorLatest(root: string, runRoot: string): void {
+  const latestRoot = join(root, ".vibeharness", "runs", "latest");
+  rmSync(latestRoot, { recursive: true, force: true });
+  cpSync(runRoot, latestRoot, { recursive: true });
 }
 
 function transitionRunStatus(outcome: ApprovalOutcome["outcome"]): RunStatus {
@@ -60,5 +72,6 @@ export function recordApprovalOutcome(
 
   writeJson(join(runRoot, "approval-outcome.json"), approvalOutcome);
   writeJson(join(runRoot, "run-manifest.json"), updatedManifest);
+  mirrorLatest(root, runRoot);
   return approvalOutcome;
 }

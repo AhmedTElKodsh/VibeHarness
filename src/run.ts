@@ -16,7 +16,13 @@ function mirrorLatest(runsRoot: string, runRoot: string): void {
   cpSync(runRoot, latestRoot, { recursive: true });
 }
 
-const policyFixtureWorkflows = new Set(["policy-blocked", "policy-denied", "policy-quarantined", "policy-warn"]);
+const policyFixtureWorkflows = new Set([
+  "mock-partial-failure",
+  "policy-blocked",
+  "policy-denied",
+  "policy-quarantined",
+  "policy-warn"
+]);
 
 function policyActionsForWorkflow(workflowName: string): PolicyAction[] {
   switch (workflowName) {
@@ -90,6 +96,16 @@ function stageStatusForRun(status: RunStatus, required: boolean): "blocked" | "f
   return "passed";
 }
 
+function stageStatusForWorkflow(workflowName: string, stageId: string, status: RunStatus, required: boolean): "blocked" | "failed" | "passed" | "skipped" {
+  if (workflowName !== "mock-partial-failure") {
+    return stageStatusForRun(status, required);
+  }
+  if (stageId === "review") {
+    return "failed";
+  }
+  return stageId === "handoff" ? "skipped" : "passed";
+}
+
 export function executeRun(root: string, workflowName: string, adapterName: string): RunManifest {
   const project = loadProjectConfig(root);
   const workflow = loadWorkflowConfig(root, workflowName);
@@ -120,7 +136,7 @@ export function executeRun(root: string, workflowName: string, adapterName: stri
   if (decision === undefined) {
     throw new Error("Policy classifier produced no decisions.");
   }
-  const status = runStatusForDecision(decision);
+  const status = workflowName === "mock-partial-failure" ? "failed" : runStatusForDecision(decision);
 
   const implementationStage =
     workflow.stages.find((stage) => stage.adapter === adapter.name) ?? workflow.stages.find((stage) => stage.id === "implementation");
@@ -153,6 +169,9 @@ ${adapterTask.expectedArtifacts.map((artifact) => `  - ${artifact}`).join("\n")}
     true
   );
   writeText(join(runRoot, "stage-logs", "implementation.log"), `Mock adapter completed with status ${status}.\n`, true);
+  if (workflowName === "mock-partial-failure") {
+    writeText(join(runRoot, "stage-logs", "review.log"), "Mock adapter failed at stage review.\n", true);
+  }
   for (const policyDecision of decisions) {
     writeJson(join(runRoot, "policy-decisions", `${policyDecision.id}.json`), policyDecision);
   }
@@ -184,7 +203,7 @@ ${adapterTask.expectedArtifacts.map((artifact) => `  - ${artifact}`).join("\n")}
     completedAt: new Date().toISOString(),
     stages: workflow.stages.map((stage) => ({
       id: stage.id,
-      status: stageStatusForRun(status, stage.required),
+      status: stageStatusForWorkflow(workflowName, stage.id, status, stage.required),
       artifacts: stage.outputs
     })),
     policyDecisions: decisions,
@@ -197,6 +216,7 @@ ${adapterTask.expectedArtifacts.map((artifact) => `  - ${artifact}`).join("\n")}
     artifacts: [
       ".vibeharness/runs/<run_id>/adapter-task.yaml",
       ".vibeharness/runs/<run_id>/stage-logs/implementation.log",
+      ...(workflowName === "mock-partial-failure" ? [".vibeharness/runs/<run_id>/stage-logs/review.log"] : []),
       ...decisions.map((policyDecision) => `.vibeharness/runs/<run_id>/policy-decisions/${policyDecision.id}.json`)
     ]
   };

@@ -153,6 +153,61 @@ describe("P0 CLI loop", () => {
     }
   });
 
+  test("resumes an approved run and records a mock partial failure", async () => {
+    const root = makeTempRoot();
+    writeValidationFixtures(root);
+
+    const approvalRoot = join(root, "fixtures", "vibeharness-policy-blocked");
+    expect(await runCli(approvalRoot, ["run", "--workflow", "policy-blocked", "--adapter", "mock"])).toMatchObject({
+      exitCode: 0
+    });
+    const approvalManifestBefore = JSON.parse(
+      readFileSync(join(approvalRoot, ".vibeharness", "runs", "latest", "run-manifest.json"), "utf8")
+    ) as { runId: string };
+    expect(
+      await runCli(approvalRoot, [
+        "approve",
+        "--run",
+        "latest",
+        "--decision",
+        "destructive-command",
+        "--outcome",
+        "approved",
+        "--actor",
+        "tester",
+        "--reason",
+        "fixture approval"
+      ])
+    ).toMatchObject({ exitCode: 0 });
+    const latestManifest = JSON.parse(
+      readFileSync(join(approvalRoot, ".vibeharness", "runs", "latest", "run-manifest.json"), "utf8")
+    ) as Record<string, unknown>;
+    const canonicalManifest = JSON.parse(
+      readFileSync(
+        join(approvalRoot, ".vibeharness", "runs", approvalManifestBefore.runId, "run-manifest.json"),
+        "utf8"
+      )
+    ) as Record<string, unknown>;
+    expect(latestManifest.status).toBe("passed");
+    expect(canonicalManifest.status).toBe("passed");
+    expect(latestManifest.artifacts).toContain(".vibeharness/runs/<run_id>/approval-outcome.json");
+
+    const partialRoot = join(root, "fixtures", "vibeharness-mock-partial-failure");
+    expect(await runCli(partialRoot, ["run", "--workflow", "mock-partial-failure", "--adapter", "mock"])).toMatchObject({
+      exitCode: 1
+    });
+    const partialManifest = JSON.parse(
+      readFileSync(join(partialRoot, ".vibeharness", "runs", "latest", "run-manifest.json"), "utf8")
+    ) as { status: string; stages: { id: string; status: string; artifacts: string[] }[]; artifacts: string[] };
+    expect(partialManifest.status).toBe("failed");
+    expect(partialManifest.stages).toContainEqual({ id: "review", status: "failed", artifacts: [".vibeharness/runs/latest/stage-logs/review.log"] });
+    expect(partialManifest.stages).toContainEqual({ id: "handoff", status: "skipped", artifacts: [".vibeharness/runs/latest/handoff.md"] });
+    expect(partialManifest.artifacts).toContain(".vibeharness/runs/<run_id>/stage-logs/review.log");
+    expect(readFileSync(join(partialRoot, ".vibeharness", "runs", "latest", "stage-logs", "review.log"), "utf8")).toContain(
+      "failed at stage review"
+    );
+  });
+
   test("records deny, quarantine, and warn policy fixture decisions", async () => {
     const root = makeTempRoot();
     writeValidationFixtures(root);

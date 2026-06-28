@@ -5,6 +5,7 @@ import {
   eccReviewProfileYaml,
   exampleIdea,
   mockAdapterYaml,
+  mockPartialFailureWorkflowYaml,
   openHandsAdapterExampleYaml,
   policyBlockedWorkflowYaml,
   policyDeniedWorkflowYaml,
@@ -39,6 +40,7 @@ export function writeValidationFixtures(workspaceRoot: string): void {
   const policyDeniedRoot = join(workspaceRoot, "fixtures", "vibeharness-policy-denied");
   const policyQuarantinedRoot = join(workspaceRoot, "fixtures", "vibeharness-policy-quarantined");
   const policyWarnRoot = join(workspaceRoot, "fixtures", "vibeharness-policy-warn");
+  const partialFailureRoot = join(workspaceRoot, "fixtures", "vibeharness-mock-partial-failure");
   const defaultRunRoot = join(workspaceRoot, "fixtures", "vibeharness-mock-run");
   const reviewHandoffRoot = join(workspaceRoot, "fixtures", "vibeharness-review-handoff");
 
@@ -77,6 +79,12 @@ export function writeValidationFixtures(workspaceRoot: string): void {
   writeText(
     join(policyWarnRoot, ".vibeharness", "workflows", "policy-warn.yaml"),
     policyWarnWorkflowYaml,
+    true
+  );
+  writeStarterProject(partialFailureRoot, true);
+  writeText(
+    join(partialFailureRoot, ".vibeharness", "workflows", "mock-partial-failure.yaml"),
+    mockPartialFailureWorkflowYaml,
     true
   );
   writeStarterProject(defaultRunRoot, true);

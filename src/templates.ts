@@ -159,6 +159,31 @@ stages:
       - .vibeharness/runs/latest/policy-decisions/memory-update.json
 `;
 
+export const mockPartialFailureWorkflowYaml = `schemaVersion: v1alpha1
+name: mock-partial-failure
+stages:
+  - id: implementation
+    name: Mock implementation
+    required: true
+    adapter: mock
+    operatorProfile: ecc-implementation
+    outputs:
+      - .vibeharness/runs/latest/adapter-task.yaml
+  - id: review
+    name: Simulated failing review
+    required: true
+    adapter: mock
+    operatorProfile: ecc-review
+    outputs:
+      - .vibeharness/runs/latest/stage-logs/review.log
+  - id: handoff
+    name: Handoff after review
+    required: true
+    operatorProfile: ecc-review
+    outputs:
+      - .vibeharness/runs/latest/handoff.md
+`;
+
 export const exampleIdea = `# Example idea
 
 Add a simple health check endpoint and a smoke test so operators can verify the service is alive.
